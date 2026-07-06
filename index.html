@@ -1,0 +1,157 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="學測自然複習">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<title>學測自然複習 · 總入口</title>
+<style>
+:root{
+  --accent:#0f766e; --accent2:#14b8a6; --ink:#18261f; --sub:#5b6b64;
+  --bg:#f2f6f4; --card:#fff; --line:#e2ebe6; --good:#16a34a; --gold:#f59e0b; --bad:#dc2626;
+  --shadow:0 8px 26px rgba(15,60,50,.10); --wrap:680px;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0c1512; --card:#141d19; --ink:#e6efea; --sub:#93a49c; --line:#243029;
+  --shadow:0 8px 26px rgba(0,0,0,.45);}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{overflow-x:hidden;max-width:100%}
+body{margin:0;font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 15px 40px}
+.top{background:linear-gradient(135deg,#0f766e,#14b8a6 55%,#22d3ee);color:#fff;
+  padding:calc(env(safe-area-inset-top) + 30px) 0 62px;text-align:center;position:relative;overflow:hidden}
+.top::after{content:"🔬🧬🌏";position:absolute;right:-6px;top:6px;font-size:40px;opacity:.16;letter-spacing:6px}
+.top h1{margin:0;font-size:1.5rem;font-weight:900;letter-spacing:1px}
+.top p{margin:6px 0 0;font-size:.82rem;opacity:.92}
+.pull{margin-top:-44px}
+.exam{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:16px 18px;display:flex;align-items:center;gap:14px}
+.exam .d{font-size:2.4rem;font-weight:900;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
+.exam .l{flex:1;min-width:0}.exam .l b{font-size:.95rem}.exam .l small{display:block;color:var(--sub);font-size:.74rem;margin-top:2px}
+.exam input{border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--card);color:var(--ink);font:inherit;min-width:0;max-width:100%}
+.exam .d{flex:0 0 auto}
+.exam button{border:0;background:var(--accent);color:#fff;border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer;font:inherit}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin:16px 0}
+.stat{background:var(--card);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--shadow);min-width:0}
+.stat b{display:block;font-size:1.6rem;font-weight:900;color:var(--accent);line-height:1.1}
+.stat span{font-size:.72rem;color:var(--sub)}
+.sect{font-size:.82rem;font-weight:800;color:var(--sub);margin:20px 4px 10px;letter-spacing:.5px}
+.card{display:block;text-decoration:none;color:inherit;background:var(--card);border-radius:20px;
+  box-shadow:var(--shadow);padding:16px 17px;margin-bottom:14px;border:1px solid var(--line);
+  position:relative;overflow:hidden;transition:transform .12s}
+.card:active{transform:scale(.985)}
+.card .bar-top{position:absolute;left:0;top:0;height:5px;width:100%}
+.card .hd{display:flex;align-items:center;gap:13px;margin-bottom:12px}
+.card .emoji{flex:0 0 auto;font-size:32px;width:52px;height:52px;border-radius:15px;display:grid;place-items:center;color:#fff}
+.card .nm{flex:1;min-width:0}
+.card .nm b{font-size:1.12rem;font-weight:900}
+.card .nm small{display:block;color:var(--sub);font-size:.76rem;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .go{flex:0 0 auto;font-size:.8rem;font-weight:800;padding:7px 13px;border-radius:20px;color:#fff}
+.prog{height:9px;border-radius:99px;background:var(--line);overflow:hidden;margin:4px 0 8px}
+.prog i{display:block;height:100%;border-radius:99px;transition:width .5s}
+.row{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:.78rem;color:var(--sub);font-weight:600}
+.row .hi{color:var(--ink);font-weight:800}
+.badge{display:inline-block;font-size:.68rem;font-weight:800;padding:2px 8px;border-radius:20px;margin-left:6px}
+.foot{text-align:center;color:var(--sub);font-size:.72rem;margin-top:22px;line-height:1.7}
+.tip{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:12px 15px;font-size:.8rem;color:var(--sub);line-height:1.7;margin-top:4px}
+.tip b{color:var(--ink)}
+</style>
+
+<div class="top">
+  <h1>🔬 學測自然複習</h1>
+  <p>生物 · 地球科學 · 分科生物　官方歷屆題庫</p>
+</div>
+
+<div class="wrap">
+  <div class="pull"></div>
+  <div class="exam" id="exam"></div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="sect">📚 題庫 App（點卡片開始練習）</div>
+  <div id="cards"></div>
+
+  <div class="sect">💡 使用說明</div>
+  <div class="tip">
+    <b>三支 App 各自獨立</b>，進度分開記錄、離線可用、可各自「加到主畫面」。<br>
+    在此設定<b>學測日期</b>會同步到三支 App 的倒數。學測考生物與地科（學測自然）；<b>分科生物</b>範圍更廣（選修生物Ⅰ–Ⅳ），作為進階加深練習。
+  </div>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+const HUBKEY='natsci_hub_v1';
+const APPS=[
+ {key:'biogsat_qb_v1',name:'學測生物',sub:'細胞・遺傳・演化（學測自然）',emoji:'🧬',c:'#059669',c2:'#10b981',path:'biology/index.html',tot:71,all:78},
+ {key:'escgsat_qb_v1',name:'學測地科',sub:'天文・大氣・海洋・地質・永續',emoji:'🌏',c:'#0284c7',c2:'#38bdf8',path:'earth/index.html',tot:62,all:70},
+ {key:'fenke_qb_v1',name:'分科生物',sub:'選修生物Ⅰ–Ⅳ · 進階加深',emoji:'🧪',c:'#7c3aed',c2:'#a78bfa',path:'advanced-bio/index.html',tot:116,all:146},
+];
+function readS(key){try{return JSON.parse(localStorage.getItem(key)||'{}')||{}}catch(e){return{}}}
+function stat(key){const S=readS(key);const rec=S.rec||{};const done=Object.keys(rec).length;
+  const corr=Object.values(rec).filter(x=>x&&x.correct).length;
+  return{done,corr,wrong:(S.wrong||[]).length,fav:(S.fav||[]).length,exam:((S.settings||{}).examDate)||''};}
+function pct(a,b){return b?Math.round(a/b*100):0}
+function esc(s){return(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+function examDate(){
+  // 優先 hub 自己的；否則抓任一 App 有設的
+  let d=(readS(HUBKEY).examDate)||'';
+  if(!d){for(const a of APPS){const e=stat(a.key).exam;if(e){d=e;break;}}}
+  return d;
+}
+function setExam(v){
+  const h=readS(HUBKEY);h.examDate=v;try{localStorage.setItem(HUBKEY,JSON.stringify(h))}catch(e){}
+  // 同步到三支 App
+  APPS.forEach(a=>{const S=readS(a.key);S.settings=S.settings||{dark:'auto',immediate:true};S.settings.examDate=v;
+    try{localStorage.setItem(a.key,JSON.stringify(S))}catch(e){}});
+  render();
+}
+function dayDiff(a,b){return Math.round((new Date(b)-new Date(a))/86400000)}
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+
+function render(){
+  const dt=examDate();
+  let cd=dt?dayDiff(todayStr(),dt):null;
+  document.getElementById('exam').innerHTML = cd!=null
+   ? `<div class="d">${cd>0?cd:cd===0?'0':'✓'}</div>
+      <div class="l"><b>${cd>0?`距離學測還有 ${cd} 天`:cd===0?'今天就是學測！加油':`學測已過 ${-cd} 天`}</b>
+        <small>${esc(dt)}　點日期可修改（三支 App 同步）</small>
+        <input type="date" value="${esc(dt)}" onchange="setExam(this.value)" style="margin-top:6px;width:100%"></div>`
+   : `<div class="d">📅</div><div class="l"><b>設定學測日期</b><small>設定後首頁顯示倒數，並同步到三支 App</small>
+        <input type="date" onchange="setExam(this.value)" style="margin-top:6px;width:100%"></div>`;
+
+  // 總覽
+  let done=0,corr=0,wrong=0;
+  APPS.forEach(a=>{const s=stat(a.key);done+=s.done;corr+=s.corr;wrong+=s.wrong;});
+  document.getElementById('stats').innerHTML=`
+    <div class="stat"><b>${done}</b><span>累計已練</span></div>
+    <div class="stat"><b>${pct(corr,done)}%</b><span>總答對率</span></div>
+    <div class="stat"><b>${wrong}</b><span>待清錯題</span></div>`;
+
+  // 卡片
+  document.getElementById('cards').innerHTML=APPS.map(a=>{
+    const s=stat(a.key);const p=pct(s.done,a.tot);
+    const acc=s.done?pct(s.corr,s.done):0;
+    const accBadge=s.done?`<span class="badge" style="background:${acc>=80?'#dcfce7':acc>=60?'#fef3c7':'#fee2e2'};color:${acc>=80?'#16a34a':acc>=60?'#b45309':'#dc2626'}">答對率 ${acc}%</span>`:'';
+    return `<a class="card" href="${a.path}">
+      <div class="bar-top" style="background:linear-gradient(90deg,${a.c},${a.c2})"></div>
+      <div class="hd">
+        <div class="emoji" style="background:linear-gradient(135deg,${a.c},${a.c2})">${a.emoji}</div>
+        <div class="nm"><b>${a.name}</b><small>${esc(a.sub)}　·　${a.all} 題</small></div>
+        <div class="go" style="background:${a.c}">開始 ›</div>
+      </div>
+      <div class="prog"><i style="width:${p}%;background:linear-gradient(90deg,${a.c},${a.c2})"></i></div>
+      <div class="row"><span>已練 <span class="hi">${s.done}</span> / ${a.tot} 題（${p}%）${accBadge}</span>
+        <span>${s.wrong?`錯題 <span class="hi" style="color:var(--bad)">${s.wrong}</span>`:'錯題 0'}</span></div>
+    </a>`;
+  }).join('');
+
+  document.getElementById('foot').innerHTML=`題目為大考中心官方公開試題（學測111–115／分科112–114），詳解引自翰林精彩解析。<br>離線可用 · 進度存於本機瀏覽器 · 僅供教學與自學練習`;
+}
+render();
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+</script>
