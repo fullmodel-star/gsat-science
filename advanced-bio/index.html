@@ -182,6 +182,11 @@ S.settings = S.settings||{dark:'auto',immediate:true};
 if(S.settings.examDate===undefined)S.settings.examDate='';
 applyTheme();
 
+/* ---------- 忍者修行：跨App共用經驗值錢包(同網域，灌進火影修行計畫) ---------- */
+const NINJA_APP='advanced-bio';
+window.Ninja=window.Ninja||(function(){var K='ninja_xp_v1';function L(){try{return JSON.parse(localStorage.getItem(K))||{}}catch(e){return{}}}function G(){var w=L();w.xp=w.xp||0;w.bySrc=w.bySrc||{};w.correct=w.correct||0;w.units=w.units||0;w.jutsu=w.jutsu||[];w.seen=w.seen||{};return w}function P(w){w.ts=Date.now();try{localStorage.setItem(K,JSON.stringify(w))}catch(e){}}return{get:G,gain:function(n,a,o){o=o||{};var w=G();w.xp+=n;w.bySrc[a]=(w.bySrc[a]||0)+n;w.correct+=(o.correct||0);w.units+=(o.unit||0);P(w);return w},backfill:function(a,x,o){var w=G();if(w.seen[a])return w;o=o||{};w.xp+=x;w.bySrc[a]=(w.bySrc[a]||0)+x;w.correct+=(o.correct||0);w.units+=(o.unit||0);w.seen[a]=1;P(w);return w}}})();
+(function(){try{var cor=Object.values(S.rec||{}).filter(x=>x&&x.correct).length;Ninja.backfill(NINJA_APP,cor*10,{correct:cor});}catch(e){}})();
+
 /* ---------- helpers ---------- */
 const $=s=>document.querySelector(s);
 function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
@@ -191,10 +196,13 @@ function ansStr(q){return (q.answer||[]).slice().sort().join('')}
 function optKeys(q){const k=Object.keys(q.options||{});return k.length?k:['A','B','C','D','E'];}
 function markAns(q,pick){        // pick: 排序後字串, 如 "A" 或 "AC"
   const ok = pick===ansStr(q);
-  S.rec[q.id]={correct:ok,n:(S.rec[q.id]?.n||0)+1};
+  const prev=S.rec[q.id];
+  const firstCorrect = ok && !(prev&&prev.correct);   // 首次答對才給忍者經驗(防重刷)
+  S.rec[q.id]={correct:ok,n:(prev?.n||0)+1};
   const set=new Set(S.wrong);
   if(ok) set.delete(q.id); else set.add(q.id);
   S.wrong=[...set]; save();
+  if(firstCorrect) Ninja.gain(10,NINJA_APP,{correct:1});
   return ok;
 }
 const byId = Object.fromEntries(R.map(q=>[q.id,q]));
@@ -541,5 +549,4 @@ ov.addEventListener('click',function(e){if(e.target===ov)close();});
 hb.addEventListener('click',show);
 try{if(!localStorage.getItem(K))setTimeout(show,500);}catch(e){setTimeout(show,500);}
 })();</script>
-
-<script>(function(){var b=document.createElement('a');b.href='../index.html';b.textContent='⬅ 自然科';b.setAttribute('aria-label','回自然科入口');b.style.cssText='position:fixed;left:calc(56px + env(safe-area-inset-left));bottom:calc(76px + env(safe-area-inset-bottom));z-index:2147482000;height:40px;display:flex;align-items:center;border-radius:20px;border:1px solid #e2e2ea;background:rgba(255,255,255,.94);color:#555;font:700 13px "PingFang TC",system-ui,sans-serif;text-decoration:none;padding:0 13px;box-shadow:0 3px 12px rgba(0,0,0,.18)';document.body.appendChild(b);})();</script>
+<script>(function(){var b=document.createElement("a");b.href="../index.html";b.textContent="⬅ 自然科";b.style.cssText="position:fixed;left:calc(56px + env(safe-area-inset-left));bottom:calc(76px + env(safe-area-inset-bottom));z-index:2147482000;height:40px;display:flex;align-items:center;border-radius:20px;border:1px solid #e2e2ea;background:rgba(255,255,255,.94);color:#555;font:700 13px PingFang TC,system-ui,sans-serif;text-decoration:none;padding:0 13px;box-shadow:0 3px 12px rgba(0,0,0,.18)";document.body.appendChild(b);})();</script>
