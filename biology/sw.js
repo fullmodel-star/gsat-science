@@ -1,4 +1,4 @@
-const C='biogsatqb-v5';
+const C='biogsatqb-v6';
 const A=['index.html','manifest.json','ridgeline-ui.css','favicon.svg','icon-192.png','icon-512.png','icon-maskable-512.png','icon.svg'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(c=>c.addAll(A).catch(()=>{})))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))))});
