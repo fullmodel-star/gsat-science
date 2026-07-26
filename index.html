@@ -59,11 +59,15 @@ body{margin:0;font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",syst
 .foot{text-align:center;color:var(--sub);font-size:.72rem;margin-top:22px;line-height:1.7}
 .tip{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:12px 15px;font-size:.8rem;color:var(--sub);line-height:1.7;margin-top:4px}
 .tip b{color:var(--ink)}
+
+.rl-glyph-d{display:none}
+html[data-theme="dark"] .rl-glyph-l{display:none}
+html[data-theme="dark"] .rl-glyph-d{display:inline}
 </style>
 <body class="theme-pine">
 
 <header class="rl-appbar">
-  <span class="rl-mark"><svg class="rl-glyph" viewBox="0 0 64 64" width="30" height="30" fill="none"><path d="M0 54 L8 48 L14 51 L22 38 L26 42 L36 14 L46 34 L61 44" fill="none" stroke="currentColor" stroke-width="4.4" stroke-linejoin="round" stroke-linecap="round"/><path d="M31.3 27.2 L36 14 L38.7 19.4" fill="none" stroke="#DE9A45" stroke-width="4.4" stroke-linejoin="round" stroke-linecap="round"/></svg></span>
+  <span class="rl-mark"><img class="rl-glyph rl-glyph-l" src="rl-mark-denali-navy.png" width="30" height="30" alt="" style="object-fit:contain"><img class="rl-glyph rl-glyph-d" src="rl-mark-denali-white.png" width="30" height="30" alt="" style="object-fit:contain"></span>
   <div>
     <div class="rl-title">學測自然複習</div>
     <div class="rl-sub">生物・地球科學・分科生物　官方歷屆題庫</div>
@@ -90,7 +94,7 @@ body{margin:0;font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",syst
 
   <footer class="rl-signature">
     <div class="rl-sig-row">
-      <span class="rl-mkcol" style="display:inline-flex;flex-direction:column;align-items:center;gap:3px"><svg class="rl-sig-glyph" viewBox="0 0 64 64" width="66" height="34" fill="none"><path d="M0 54 L8 48 L14 51 L22 38 L26 42 L36 14 L46 34 L61 44" fill="none" stroke="currentColor" stroke-width="4.4" stroke-linejoin="round" stroke-linecap="round"/><path d="M31.3 27.2 L36 14 L38.7 19.4" fill="none" stroke="#DE9A45" stroke-width="4.4" stroke-linejoin="round" stroke-linecap="round"/></svg><span style="font-family:'Noto Serif TC',serif;font-size:14px;font-weight:600;letter-spacing:.5px;color:currentColor">Denali</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:2px;color:#8794a3">6,190 M</span></span>
+      <span class="rl-mkcol" style="display:inline-flex;flex-direction:column;align-items:center;gap:3px"><img class="rl-sig-glyph rl-glyph-l" src="rl-mark-denali-navy.png" width="66" height="34" alt="" style="object-fit:contain"><img class="rl-sig-glyph rl-glyph-d" src="rl-mark-denali-white.png" width="66" height="34" alt="" style="object-fit:contain"><span style="font-family:'Noto Serif TC',serif;font-size:14px;font-weight:600;letter-spacing:.5px;color:currentColor">Denali</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:2px;color:#8794a3">6,190 M</span></span>
       <span class="rl-sig-rule" style="height:88px"></span>
       <p class="rl-sig-quote">今天的試煉，<br>是明天的高度。</p>
     </div>
