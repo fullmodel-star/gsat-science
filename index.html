@@ -126,9 +126,9 @@ body{margin:0;font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",syst
 <script>
 const HUBKEY='natsci_hub_v1';
 const APPS=[
- {key:'biogsat_qb_v1',name:'學測生物',sub:'細胞・遺傳・演化（學測自然）',emoji:'🧬',c:'#059669',c2:'#10b981',path:'biology/index.html',tot:71,all:78},
+ {key:'biogsat_qb_v1',name:'學測生物',sub:'細胞・遺傳・演化（學測自然）',emoji:'🧬',c:'#059669',c2:'#10b981',path:'biology/index.html',tot:69,all:78},
  {key:'escgsat_qb_v1',name:'學測地科',sub:'天文・大氣・海洋・地質・永續',emoji:'🌏',c:'#0284c7',c2:'#38bdf8',path:'earth/index.html',tot:62,all:70},
- {key:'fenke_qb_v1',name:'分科生物',sub:'選修生物Ⅰ–Ⅳ · 進階加深',emoji:'🧪',c:'#7c3aed',c2:'#a78bfa',path:'advanced-bio/index.html',tot:116,all:146},
+ {key:'fenke_qb_v1',name:'分科生物',sub:'選修生物Ⅰ–Ⅳ · 進階加深',emoji:'🧪',c:'#7c3aed',c2:'#a78bfa',path:'advanced-bio/index.html',tot:111,all:146},
 ];
 function readS(key){try{return JSON.parse(localStorage.getItem(key)||'{}')||{}}catch(e){return{}}}
 function stat(key){const S=readS(key);const rec=S.rec||{};const done=Object.keys(rec).length;
