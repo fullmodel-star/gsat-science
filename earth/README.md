@@ -10,3 +10,9 @@
 
 ## 技術
 - 單檔 `index.html`。localStorage 主 key：`escgsat_qb_v1`；SW：`escgsatqb-v1`；引導：`wc.escgsat-qbank`。主題色 `#0284c7`（天空藍）。與生物版／英語家族 key 全分開。
+
+## 題庫資料修正（2026-10-01）
+- 原建置管線（`_封存_舊中文結構/_build`：build_subject→finalize→assemble）已無法重現現行題庫（詳解、章節、111 配對、gid 皆會變），**不要整條重跑**。
+- 改用疊加修正：`python _build/fix_20261001.py`（以 `qb_*.pre20261001.json` 為底、重讀同一套原始 PDF）→ `python _build/inject_qb.py`（只換 index.html 的 `const QB` 那一行）。
+- 檢查：`python _tools/check_qb.py`（選項數、題組引言混入、引用圖表有圖、殘圖、翰林答案比對；0 違規才可發版）。
+- 純圖選項題用 `optKeys` 記錄原卷實際選項字母（不再一律 A–E）；沒有可作答選項的題目不會進入任何練習。
