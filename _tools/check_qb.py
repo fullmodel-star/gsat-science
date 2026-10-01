@@ -11,6 +11,9 @@
   D. 題目文字引用「圖N／表N」者，本題或所屬題組必須有圖。
   E. 圖檔可解碼，且沒有只剩頁首條的殘圖（高度 < 100px）。
   F. 若本機有原始 PDF：112 年起的答案與翰林答案欄逐題比對；答案欄是文字（非選）的題目不得出現在練習題。
+  G. 翰林詳解下架（2026-10-01）：每題 expl（解析）必須為空（除非列在 strip_hanlin_expl.SELF_WRITTEN 的自寫題）、
+     topic（翰林測驗目標）必須為空；三支 App 與 hub 的 index.html 不得出現「翰林」「精彩解析」；
+     若本機有 _build/qb_*.json（含原翰林詳解），逐題確認原詳解文字（前 20 字）不在 index.html 裡。
 
 用法： python _tools/check_qb.py
 """
@@ -72,6 +75,36 @@ def pdf_truth():
     finally:
         os.chdir(cwd)
 
+def hanlin_check():
+    """G 類：回傳 (違規清單, 掃描題數, 比對原詳解題數)"""
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from strip_hanlin_expl import SELF_WRITTEN
+    V = []; scanned = 0; orig_cmp = 0
+    for sub, name in APPS:
+        raw = open(os.path.join(ROOT, sub, 'index.html'), 'rb').read().decode('utf-8')
+        for w in ('翰林', '精彩解析'):
+            if w in raw: V.append((sub, 'G', f'index.html 含「{w}」{raw.count(w)} 處'))
+        qb = load_qb(sub); keep = SELF_WRITTEN.get(sub, set())
+        for q in qb['reading'] + qb['nonchoice']:
+            scanned += 1
+            if (q.get('expl') or '').strip() and q['id'] not in keep: V.append((q['id'], 'G', f'{sub} 解析欄不是空的（{q["expl"][:20]}…）'))
+            if (q.get('topic') or '').strip(): V.append((q['id'], 'G', f'{sub} topic 欄不是空的'))
+        src = {'biology': 'qb_bio', 'earth': 'qb_esc', 'advanced-bio': 'qb_fenke'}[sub]
+        for fn in (f'{src}.json', f'{src}.pre20261001.json'):
+            fp = os.path.join(BUILD, fn)
+            if not os.path.isfile(fp): continue
+            old = json.load(open(fp, encoding='utf-8'))
+            for q in old['reading'] + old['nonchoice']:
+                e = re.sub(r'\s+', ' ', q.get('expl') or '').strip()
+                if len(e) < 12 or q['id'] in keep: continue
+                orig_cmp += 1
+                frag = json.dumps(e[:20], ensure_ascii=False)[1:-1]
+                if frag in raw or e[:20] in raw: V.append((q['id'], 'G', f'{sub} 原翰林詳解文字仍在 index.html（{e[:20]}）'))
+    hub = open(os.path.join(ROOT, 'index.html'), 'rb').read().decode('utf-8')
+    for w in ('翰林', '精彩解析'):
+        if w in hub: V.append(('hub', 'G', f'index.html 含「{w}」{hub.count(w)} 處'))
+    return V, scanned, orig_cmp
+
 def main():
     truth = pdf_truth()
     total_v = 0; scanned = 0; scanned_nc = 0; refs_checked = 0; imgs_checked = 0; pdf_cmp = 0; ans_cmp = 0
@@ -128,6 +161,11 @@ def main():
         total_v += len(V)
     print(f'\n掃描題數：練習 {scanned}＋非選 {scanned_nc}＝{scanned + scanned_nc}；引用圖表題 {refs_checked}；圖檔 {imgs_checked}；'
           f'原卷選項數比對 {pdf_cmp} 題；翰林答案比對 {ans_cmp} 題' + ('' if truth else '（本機無原始 PDF，B2/F 略過）'))
+    GV, g_scan, g_cmp = hanlin_check()
+    print(f'[翰林詳解下架 G] 掃描題數 {g_scan}；比對原翰林詳解 {g_cmp} 筆（含修正前備份，有重複）；違規 {len(GV)}')
+    for v in GV: print('   ✗', *v)
+    total_v += len(GV)
+    if g_scan == 0: print('✗ G 類沒有掃到任何題目'); sys.exit(1)
     print(f'違規總數：{total_v}')
     if scanned == 0: print('✗ 沒有掃到任何題目'); sys.exit(1)
     sys.exit(1 if total_v else 0)
