@@ -15,6 +15,9 @@
      topic（翰林測驗目標）必須為空；三支 App 與 hub 的 index.html 不得出現「翰林」「精彩解析」；
      若本機有 _build/qb_*.json（含原翰林詳解），逐題確認原詳解文字（前 20 字）不在 index.html 裡。
 
+  H. 分科生物（2026-10-02 起）：逐題對大考中心官方選擇題答案 PDF（111–115）；「／」＝非選；不得缺題／多題；
+     有官方試卷 PDF 的年份逐題比對原卷選項字母。
+
 用法： python _tools/check_qb.py
 """
 import json, re, os, sys, base64, io, struct
@@ -105,6 +108,57 @@ def hanlin_check():
         if w in hub: V.append(('hub', 'G', f'index.html 含「{w}」{hub.count(w)} 處'))
     return V, scanned, orig_cmp
 
+def official_fenke_check(qb):
+    """H 類（2026-10-02）：分科生物逐題對「大考中心官方選擇題答案」PDF（_build/src_fenke/{年}官方分科生物答案.pdf）。
+    答案「／」＝非選題，必須在 nonchoice；其餘必須在練習題且答案逐字相同；官方每一題都要在資料裡（不得漏題）。
+    另：有官方試卷 PDF 的年份，逐題比對原卷 (A)…(E) 選項數。回傳 (違規, 比對答案題數, 比對選項數題數, 年份)"""
+    src = os.path.join(BUILD, 'src_fenke')
+    if not os.path.isdir(src): return [], 0, 0, []
+    import fitz
+    V = []; n_ans = 0; n_opt = 0; years = []
+    allq = {q['id']: (q, 'R') for q in qb['reading']}
+    allq.update({q['id']: (q, 'N') for q in qb['nonchoice']})
+    for y in range(111, 116):
+        fp = os.path.join(src, f'{y}官方分科生物答案.pdf')
+        if not os.path.isfile(fp): continue
+        years.append(y)
+        toks = [s.strip() for s in fitz.open(fp)[0].get_text().split('\n') if s.strip() and s.strip() not in ('題號', '答案')]
+        key = {}; k = 0
+        while k + 1 < len(toks):
+            if re.fullmatch(r'\d{1,2}', toks[k]) and re.fullmatch(r'[A-E]+|／', toks[k + 1]): key[int(toks[k])] = toks[k + 1]; k += 2
+            else: k += 1
+        if len(key) < 40: V.append((f'F{y}', 'H', f'官方答案只解析出 {len(key)} 題')); continue
+        ids_year = {i for i, (q, _) in allq.items() if q['year'] == y}
+        for n, a in sorted(key.items()):
+            qid = f'F{y}-{n}'
+            if qid not in allq: V.append((qid, 'H', f'官方有第 {n} 題（答案 {a}），資料缺題')); continue
+            q, where = allq[qid]; n_ans += 1
+            if a == '／':
+                if where != 'N': V.append((qid, 'H', '官方為非選題，卻列在練習題'))
+            elif where != 'R': V.append((qid, 'H', f'官方答案 {a}，卻列在非選'))
+            elif ''.join(sorted(q['answer'])) != a: V.append((qid, 'H', f'答案 {"".join(q["answer"])} ≠ 官方 {a}'))
+        extra = ids_year - {f'F{y}-{n}' for n in key}
+        for i in sorted(extra): V.append((i, 'H', '官方答案表沒有這一題'))
+        pp = os.path.join(src, f'{y}官方分科生物試卷.pdf')
+        if os.path.isfile(pp):
+            doc = fitz.open(pp); seq = []; last = 0
+            for pi in range(1, doc.page_count):
+                for b in doc[pi].get_text('dict')['blocks']:
+                    for l in b.get('lines', []):
+                        t = ''.join(s['text'] for s in l['spans'])
+                        m = re.match(r'^\s*(\d{1,2})\s*[.．]', t)
+                        if m and l['bbox'][0] < 72 and int(m.group(1)) == last + 1:
+                            last += 1; seq.append([last, ''])
+                        if seq: seq[-1][1] += t + '\n'
+            for n, t in seq:
+                qid = f'F{y}-{n}'
+                if qid not in allq or allq[qid][1] != 'R': continue
+                q = allq[qid][0]; keys = list(q.get('options') or {}) or q.get('optKeys') or []
+                lt = sorted(set(re.findall(r'\(([A-E])\)', t)))
+                n_opt += 1
+                if lt != keys: V.append((qid, 'H', f'官方原卷選項 {lt}，資料 {keys}'))
+    return V, n_ans, n_opt, years
+
 def main():
     truth = pdf_truth()
     total_v = 0; scanned = 0; scanned_nc = 0; refs_checked = 0; imgs_checked = 0; pdf_cmp = 0; ans_cmp = 0
@@ -161,6 +215,11 @@ def main():
         total_v += len(V)
     print(f'\n掃描題數：練習 {scanned}＋非選 {scanned_nc}＝{scanned + scanned_nc}；引用圖表題 {refs_checked}；圖檔 {imgs_checked}；'
           f'原卷選項數比對 {pdf_cmp} 題；翰林答案比對 {ans_cmp} 題' + ('' if truth else '（本機無原始 PDF，B2/F 略過）'))
+    HV, h_ans, h_opt, h_years = official_fenke_check(load_qb('advanced-bio'))
+    print(f'[分科官方答案 H] 年份 {h_years}；逐題比對官方答案 {h_ans} 題；比對官方原卷選項數 {h_opt} 題；違規 {len(HV)}')
+    for v in HV: print('   ✗', *v)
+    total_v += len(HV)
+    if os.path.isdir(os.path.join(BUILD, 'src_fenke')) and h_ans == 0: print('✗ H 類沒有比對到任何題目'); sys.exit(1)
     GV, g_scan, g_cmp = hanlin_check()
     print(f'[翰林詳解下架 G] 掃描題數 {g_scan}；比對原翰林詳解 {g_cmp} 筆（含修正前備份，有重複）；違規 {len(GV)}')
     for v in GV: print('   ✗', *v)
