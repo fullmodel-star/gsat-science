@@ -58,7 +58,7 @@ body{margin:0;font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",syst
 .cd{display:flex;align-items:center;gap:13px;background:var(--accent);color:#fff;border-radius:16px;padding:14px 16px;margin:14px 0 4px;cursor:pointer;box-shadow:var(--shadow)}
 .cd.past{background:var(--muted,#6E8BA3)}
 .cd .cdi{font-size:26px}
-.cd b{font-size:1rem}.cd small{display:block;opacity:.9;font-size:.72rem;margin-top:2px}
+.cd b{font-size:1rem}.cd small{display:block;opacity:.9;font-size:.8125rem;margin-top:2px}
 .mode.daily{background:var(--accent);color:#fff;border:0}
 .mode.daily .md{color:rgba(255,255,255,.9)}
 .mode.daily.ok{background:var(--goodbg);color:var(--good)}
@@ -67,37 +67,37 @@ body{margin:0;font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",syst
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
 .stat{background:var(--card);border-radius:16px;padding:14px 8px;text-align:center;box-shadow:var(--shadow)}
 .stat b{display:block;font-size:1.5rem;font-weight:800;color:var(--accent);line-height:1.1}
-.stat span{font-size:.74rem;color:var(--sub)}
+.stat span{font-size:.8125rem;color:var(--sub)}
 .sect{font-size:.82rem;font-weight:800;color:var(--sub);margin:18px 4px 8px;letter-spacing:.5px}
 .modes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .mode{background:var(--card);border-radius:18px;padding:16px;box-shadow:var(--shadow);cursor:pointer;border:1px solid var(--line);text-align:left;color:inherit;font:inherit}
 .mode .mi{font-size:26px}
 .mode .mt{font-weight:800;margin-top:6px;font-size:1rem}
-.mode .md{font-size:.72rem;color:var(--sub);margin-top:2px}
+.mode .md{font-size:.8125rem;color:var(--sub);margin-top:2px}
 .mode.wide{grid-column:1/-1;width:100%;display:flex;align-items:center;gap:14px}
 .modes .mode:last-child:nth-child(odd){grid-column:1/-1}
 @media (min-width:820px){:root{--wrap:880px}.modes{grid-template-columns:repeat(3,1fr)}}
 .mode.wide .mi{font-size:30px}
 .mode.wide .mt{margin-top:0}
-.chip{display:inline-flex;align-items:center;gap:5px;background:var(--soft);color:var(--accent);border-radius:20px;padding:4px 11px;font-size:.72rem;font-weight:700}
+.chip{display:inline-flex;align-items:center;gap:5px;background:var(--soft);color:var(--accent);border-radius:20px;padding:4px 11px;font-size:.8125rem;font-weight:700}
 .picker{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
 .pbtn{flex:1;min-width:90px;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:14px 10px;font-weight:800;cursor:pointer;color:var(--ink);font:inherit;text-align:center;box-shadow:var(--shadow)}
-.pbtn small{display:block;font-size:.72rem;color:var(--sub);font-weight:600;margin-top:3px}
+.pbtn small{display:block;font-size:.8125rem;color:var(--sub);font-weight:600;margin-top:3px}
 .pbtn.on{border-color:var(--accent);background:var(--soft);color:var(--accent)}
 .back{display:inline-flex;align-items:center;gap:5px;color:var(--accent);font-weight:700;font-size:.9rem;background:none;border:0;cursor:pointer;padding:6px 0;margin-bottom:4px}
 .qhead{display:flex;align-items:center;gap:10px;margin:6px 0 12px}
 .qhead .prog{flex:1;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
 .qhead .prog i{display:block;height:100%;background:var(--accent);transition:width .3s}
-.qhead .cnt{font-size:.8rem;font-weight:800;color:var(--sub)}
-.timer{font-size:.8rem;font-weight:800;color:var(--accent);background:var(--soft);padding:4px 10px;border-radius:20px;font-variant-numeric:tabular-nums}
-.tag{display:inline-block;font-size:.72rem;font-weight:800;color:var(--accent);background:var(--soft);border-radius:7px;padding:2px 8px;margin-right:6px}
+.qhead .cnt{font-size:.8125rem;font-weight:800;color:var(--sub)}
+.timer{font-size:.8125rem;font-weight:800;color:var(--accent);background:var(--soft);padding:4px 10px;border-radius:20px;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font-size:.8125rem;font-weight:800;color:var(--accent);background:var(--soft);border-radius:7px;padding:2px 8px;margin-right:6px}
 .tag.multi{color:#7c3aed;background:#f3e8ff}
 .tag.diff{color:var(--gold);background:#fef3c7}
 .tag.cross{color:#0891b2;background:#cffafe}
 :root[data-theme=dark] .tag.multi{background:#2a1f45}:root[data-theme=dark] .tag.diff{background:#3a2e10}:root[data-theme=dark] .tag.cross{background:#0a2a30}
 .stem{font-size:1.02rem;font-weight:600;margin:6px 0 12px;line-height:1.6}
 .passage{background:var(--soft);border-radius:14px;padding:12px 15px;font-size:.9rem;line-height:1.75;white-space:pre-wrap;margin-bottom:12px;border-left:4px solid var(--accent2)}
-.passage .pg{font-size:.7rem;color:var(--sub);font-weight:800;margin-bottom:4px;letter-spacing:.4px}
+.passage .pg{font-size:.8125rem;color:var(--sub);font-weight:800;margin-bottom:4px;letter-spacing:.4px}
 .qimg{width:100%;border-radius:12px;border:1px solid var(--line);margin:4px 0 12px;background:#fff}
 .opts{display:flex;flex-direction:column;gap:10px}
 .opt{display:flex;gap:11px;align-items:flex-start;background:var(--card);border:1.5px solid var(--line);border-radius:13px;padding:13px 14px;cursor:pointer;text-align:left;font:inherit;color:inherit;transition:.12s}
@@ -110,7 +110,7 @@ body{margin:0;font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",syst
 .opt.wrong{border-color:var(--bad);background:var(--badbg)}
 .opt.wrong .k{background:var(--bad);color:#fff}
 .opt[disabled]{cursor:default}
-.hint{font-size:.76rem;color:var(--sub);margin:2px 0 8px}
+.hint{font-size:.8125rem;color:var(--sub);margin:2px 0 8px}
 .confirm{width:100%;padding:13px;border-radius:13px;font-weight:800;font-size:.98rem;border:0;cursor:pointer;background:var(--accent);color:#fff;margin-top:12px;box-shadow:var(--shadow)}
 .confirm:disabled{opacity:.4}
 .fb{margin-top:12px;border-radius:12px;padding:11px 14px;font-weight:700;font-size:.9rem}
@@ -141,7 +141,7 @@ details summary::before{content:'▸ '}details[open] summary::before{content:'�
 .card{background:var(--card);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--card);border-top:1px solid var(--line);
   display:flex;padding-bottom:env(safe-area-inset-bottom)}
-.nav button{flex:1;background:none;border:0;padding:8px 0 7px;font-size:.66rem;color:var(--sub);cursor:pointer;font-weight:700}
+.nav button{flex:1;background:none;border:0;padding:8px 0 7px;font-size:.8125rem;color:var(--sub);cursor:pointer;font-weight:700}
 .nav button .ni{display:block;font-size:19px;margin-bottom:1px}
 .nav button.on{color:var(--accent)}
 .empty{text-align:center;color:var(--sub);padding:40px 20px;font-size:.9rem}
@@ -161,7 +161,7 @@ details summary::before{content:'▸ '}details[open] summary::before{content:'�
 .switch i{position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:.2s}
 .switch.on i{left:22px}
 .setrow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
-.setrow .l{flex:1}.setrow .l small{display:block;font-size:.72rem;color:var(--sub)}
+.setrow .l{flex:1}.setrow .l small{display:block;font-size:.8125rem;color:var(--sub)}
 </style>
 
 <header class="rl-appbar theme-pine">
@@ -192,12 +192,12 @@ details summary::before{content:'▸ '}details[open] summary::before{content:'�
 
 <footer class="rl-signature theme-pine">
   <div class="rl-sig-row">
-    <span class="rl-mkcol" style="display:inline-flex;flex-direction:column;align-items:center;gap:3px"><img class="rl-sig-glyph" src="rl-mark-denali-navy.png" width="66" height="34" alt="" style="object-fit:contain"><span style="font-family:'Noto Serif TC',serif;font-size:14px;font-weight:600;letter-spacing:.5px;color:currentColor">Denali</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:2px;color:#8794a3">6,190 M</span></span>
+    <span class="rl-mkcol" style="display:inline-flex;flex-direction:column;align-items:center;gap:3px"><img class="rl-sig-glyph" src="rl-mark-denali-navy.png" width="66" height="34" alt="" style="object-fit:contain"><span style="font-family:'Noto Serif TC',serif;font-size:14px;font-weight:600;letter-spacing:.5px;color:currentColor">Denali</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:2px;color:#8794a3">6,190 M</span></span>
     <span class="rl-sig-rule" style="height:88px"></span>
     <p class="rl-sig-quote">今天的試煉，<br>是明天的高度。</p>
   </div>
   <p class="rl-sig-by">Ridgeline · by Lucas</p>
-  <p style="font-size:11px;line-height:1.7;color:var(--muted);max-width:640px;margin:14px auto 0">© 2026 Lucas　程式著作權屬作者；試題著作權屬大學入學考試中心；本 App 免費供個人學習使用。<br>⚠️ 免責聲明：本 App 之題目、解析僅供學習參考，力求正確但仍可能有誤，且不代表任何官方立場；正式考試請以大學入學考試中心公告與教材為準。</p>
+  <p style="font-size:13px;line-height:1.7;color:var(--muted);max-width:640px;margin:14px auto 0">© 2026 Lucas　程式著作權屬作者；試題著作權屬大學入學考試中心；本 App 免費供個人學習使用。<br>⚠️ 免責聲明：本 App 之題目、解析僅供學習參考，力求正確但仍可能有誤，且不代表任何官方立場；正式考試請以大學入學考試中心公告與教材為準。</p>
 </footer>
 
 <script>
@@ -311,7 +311,7 @@ function renderHome(){
    <button class="mode wide" onclick="go('nonchoice')"><div class="mi">✍️</div><div><div class="mt">非選擇題・歷屆題目</div><div class="md">${NC.length} 題歷屆混合題（無法自動批改，可練習作答）</div></div></button>`:''}
    <div class="sect">📊 診斷</div>
    <button class="mode wide" onclick="go('diagnose')"><div class="mi">📈</div><div><div class="mt">弱點診斷</div><div class="md">看各章節／各年答對率，一鍵補強最弱項</div></div></button>
-   <p style="text-align:center;color:var(--sub);font-size:.7rem;margin-top:18px">${esc(QB.meta.source)} · 離線可用 · 進度存本機</p>`;
+   <p style="text-align:center;color:var(--sub);font-size:.8125rem;margin-top:18px">${esc(QB.meta.source)} · 離線可用 · 進度存本機</p>`;
 }
 
 /* ---------- session engine ---------- */
@@ -390,7 +390,7 @@ function drawRun(){
       <div class="cnt">${sess.i+1}/${sess.list.length}</div>
       ${sess.timed?`<div class="timer" id="timer">${fmtT(Date.now()-sess.t0)}</div>`:''}
     </div>
-    <div style="font-weight:800;font-size:.8rem;color:var(--sub);margin-bottom:8px">${esc(sess.title)}　·　${q.year}年第${q.no}題</div>
+    <div style="font-weight:800;font-size:.8125rem;color:var(--sub);margin-bottom:8px">${esc(sess.title)}　·　${q.year}年第${q.no}題</div>
     <div>${tag}</div>${ctxHtml(q)}${stem}${imgHtml(q)}
     ${hint}
     <div class="opts">${opts}</div>
@@ -524,7 +524,7 @@ function renderNonchoice(){
        ${imgHtml(q)}
        <details><summary>參考答案</summary><div class="ncref">${esc(q.expl)||NC_NOTE}</div></details>
     </div>`).join('')}
-    <p style="text-align:center;color:var(--sub);font-size:.72rem;margin-top:10px">非選擇題無法自動批改，參考答案與評分原則請見大學入學考試中心公布的資料。</p>`;
+    <p style="text-align:center;color:var(--sub);font-size:.8125rem;margin-top:10px">非選擇題無法自動批改，參考答案與評分原則請見大學入學考試中心公布的資料。</p>`;
 }
 
 /* ---------- settings ---------- */
@@ -543,7 +543,7 @@ function renderSettings(){
       <div class="setrow" style="border:0"><div class="l"><b>學習進度</b><small>已作答 ${done} 題 · 錯題 ${S.wrong.length}</small></div>
         <button class="btn ghost" style="flex:0 0 auto;padding:10px 16px" onclick="resetAll()">清除</button></div>
     </div>
-    <div class="card" style="font-size:.78rem;color:var(--sub);line-height:1.8">
+    <div class="card" style="font-size:.8125rem;color:var(--sub);line-height:1.8">
       <b>關於</b><br>題目為 <b>大學入學考試中心 學科能力測驗 自然考科 生物部分 官方公開試題（111–115）</b>。可練 ${QB.meta.usable} 題（單選＋多選，含圖表題）；另有 ${NC.length} 題混合題／非選可瀏覽。答案已對大考中心官方答案核對；逐題解析整理中。僅供教學與自學練習。
     </div>`;
 }
@@ -574,7 +574,7 @@ var css='.wc-ov{position:fixed;inset:0;background:rgba(20,30,24,.55);-webkit-bac
 +'.wc-sub{text-align:center;color:#7a7a86;font-size:13.5px;margin-bottom:15px;line-height:1.5}'
 +'.wc-step{display:flex;gap:11px;align-items:flex-start;background:#f4f8f5;border:1px solid #e6efe9;border-radius:13px;padding:10px 12px;margin-bottom:8px}'
 +'.wc-i{font-size:21px;flex:0 0 auto;line-height:1.3}'
-+'.wc-step b{font-size:14.5px}.wc-step>div>div{font-size:12.5px;color:#7a7a86;line-height:1.5;margin-top:1px}'
++'.wc-step b{font-size:14.5px}.wc-step>div>div{font-size:13px;color:#7a7a86;line-height:1.5;margin-top:1px}'
 +'.wc-start{width:100%;border:0;border-radius:14px;padding:13px;font-size:15.5px;font-weight:800;color:#fff;background:'+CFG.theme+';cursor:pointer;margin-top:8px;font-family:inherit}'
 +'.wc-help{position:fixed;left:calc(12px + env(safe-area-inset-left));bottom:calc(76px + env(safe-area-inset-bottom));z-index:2147482000;width:40px;height:40px;border-radius:50%;border:1px solid #e2e2ea;background:rgba(255,255,255,.94);color:#666;font-size:18px;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.18);padding:0}';
 var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
