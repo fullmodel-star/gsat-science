@@ -260,7 +260,27 @@ function ctxHtml(q){ const g=q.gid&&GROUPS[q.gid]; if(!g)return '';
   return `<div class="passage"><div class="pg">📎 題組共用說明</div>${esc(g.ctx)}</div>${(g.imgs||[]).map(s=>`<img class="qimg" src="${s}" alt="題組圖">`).join('')}`; }
 
 /* ---------- nav ---------- */
-function go(v){
+/* 返回鍵（2026-10-13）：分頁與作答寫入瀏覽紀錄。作答中按返回＝結束這次練習（有作答會先確認），結果頁按返回回到開始前的頁面 */
+let curV='home', navSkip=0, navQ=[], quitting=false;
+function navPush(st){ if(navSkip){navQ.push(st);return} try{history.pushState(st,'')}catch(_){} }
+try{ const s0=history.state; if(!s0||!s0.v||s0.v==='run'||s0.v==='result') history.replaceState({v:'home'},''); }catch(_){}
+window.addEventListener('popstate',e=>{
+  if(navSkip){navSkip--; if(!navSkip){const q=navQ;navQ=[];q.forEach(s=>{try{history.pushState(s,'')}catch(_){}})} return;}
+  const st=e.state||{v:'home'};
+  if(curV==='run'&&sess){
+    if(!quitting&&!confirmQuit()){ navPush({v:'run'}); return; }
+    quitting=false; stopTimer();
+  }
+  const v=(st.v==='run'||st.v==='result')?'home':(st.v||'home');
+  go(v,true);
+});
+function go(v,fromPop){
+  if(!fromPop&&v!==curV){
+    if(v==='result'||curV==='result'){ try{history.replaceState({v},'')}catch(_){} }   // 結果頁取代作答那一層，返回不會回到交過卷的題目
+    else navPush({v});
+  }
+  curV=v;
+  const hubBtn=[...document.querySelectorAll('a[href="../index.html"]')].find(a=>a.style.position==='fixed'); if(hubBtn) hubBtn.style.display=(v==='run'||v==='result')?'none':'flex';  // 作答時不讓「⬅ 自然科」浮鈕蓋住選項
   ['home','run','result','diagnose','wrong','fav','nonchoice','settings'].forEach(x=>$('#v-'+x).classList.toggle('hidden',x!==v));
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   $('#nav').classList.toggle('hidden', v==='run'||v==='result');
@@ -297,7 +317,7 @@ function renderHome(){
    <div class="picker">
      ${YEARS.map(y=>`<button class="pbtn" onclick="startExam(${y})">${y} 年<small>地科 ${usableR.filter(q=>q.year===y).length} 題</small></button>`).join('')}
    </div>
-   <div class="sect">📚 章節練習（交卷後對答案）</div>
+   <div class="sect">📚 章節練習（每題作答後立即對答案）</div>
    <div class="modes">
      ${CHAPTERS.map(c=>`<button class="mode" onclick="startChapter('${esc(c)}')"><div class="mi">${CI(c)}</div><div class="mt">${esc(c)}</div><div class="md">${usableR.filter(q=>q.ch===c).length} 題</div></button>`).join('')}
    </div>
@@ -371,15 +391,19 @@ function drawRun(){
   const tag=`<span class="tag">${CI(q.ch)} ${esc(q.ch)}</span>${multi?'<span class="tag multi">☑️ 多選</span>':''}${q.cross?'<span class="tag cross">跨科</span>':''}${diffTag(q)}`;
   const stem = q.stem ? `<div class="stem">${esc(q.stem)}</div>` : '';
   const sel = answered ? picked.split('') : (sess.sel||[]);
-  // 延後對答：作答期間只反白選取，不顯示對錯與解析（交卷後才逐題看）
+  // 2026-10-13：整卷模擬維持「交卷後才對答案」；其他練習（每日一練、章節、多選、錯題、收藏）每題作答後立即對答並顯示解析
+  const inst=sess.mode!=='exam', rev=inst&&!!(sess.rev&&sess.rev[q.id]);
+  const ansS=ansStr(q), okNow=rev&&picked===ansS;
   const opts=keys.map(k=>{
     const v=(q.options||{})[k];
-    const cls='opt'+(sel.includes(k)?' sel':'');
+    const cls='opt'+(rev?(ansS.includes(k)?' correct':(sel.includes(k)?' wrong':'')):(sel.includes(k)?' sel':''));
     const label = hasText ? `<span class="v">${esc(v)}</span>` : `<span class="v" style="color:var(--sub)">（見上圖選項 ${k}）</span>`;
-    return `<button class="${cls}" onclick="pick('${k}')"><span class="k">${k}</span>${label}</button>`;
+    return `<button class="${cls}" ${rev?'disabled':''} onclick="pick('${k}')"><span class="k">${k}</span>${label}</button>`;
   }).join('');
-  const hint = multi?`<div class="hint">☑️ 多選題：可複選${q.answer.length?'（應選 '+q.answer.length+' 項）':''}，選好直接按下一題</div>`:'';
+  const hint = multi?`<div class="hint">☑️ 多選題：可複選${q.answer.length?'（應選 '+q.answer.length+' 項）':''}，${inst?'選好按下方「確認答案」':'選好直接按下一題'}</div>`:'';
   const last=sess.i+1>=sess.list.length;
+  const fbHtml = rev ? `<div class="fb ${okNow?'ok':'no'}" id="instFb">${okNow?'✅ 答對了！':'❌ 答錯了，正解：'+ansS.split('').join('、')+'（已收進錯題本）'}</div>${explHtml(q)}` : '';
+  const nextLbl = (inst&&answered&&!rev) ? '確認答案 ✓' : (last?(inst?'完成，看這次結果 ✓':'交卷／對答案 ✓'):(answered?'下一題 ›':'先跳過 ›'));
   $('#v-run').innerHTML=`
     <div style="display:flex;align-items:center">
       <button class="back" onclick="quitRun()" style="flex:1;text-align:left">‹ 結束</button>
@@ -393,30 +417,49 @@ function drawRun(){
     <div style="font-weight:800;font-size:.8125rem;color:var(--sub);margin-bottom:8px">${esc(sess.title)}　·　${q.year}年第${q.no}題</div>
     <div>${tag}</div>${ctxHtml(q)}${stem}${imgHtml(q)}
     ${hint}
-    <div class="opts">${opts}</div>
+    <div class="opts">${opts}</div>${fbHtml}
     <div class="foot"><div class="in">
       ${sess.i>0?'<button class="btn ghost" onclick="prevQ()">‹ 上一題</button>':''}
-      <button class="btn" id="nextBtn" onclick="nextQ()">${last?'交卷／對答案 ✓':(answered?'下一題 ›':'先跳過 ›')}</button>
+      <button class="btn" id="nextBtn" onclick="nextQ()">${nextLbl}</button>
     </div></div>`;
 }
 function pick(k){
   const q=sess.list[sess.i];
+  if(sess.mode!=='exam'&&sess.rev&&sess.rev[q.id]) return;   // 已對過答案的題目不能改
   if(q.kind==='multi'){
     const s=new Set(sess.sel||[]); s.has(k)?s.delete(k):s.add(k); sess.sel=[...s];
     if(sess.sel.length) sess.picks[q.id]=sess.sel.slice().sort().join(''); else delete sess.picks[q.id];
   } else {
     sess.picks[q.id]=k;
+    if(sess.mode!=='exam'){ reveal(); return; }   // 單選：點下去就對答案
   }
   drawRun();
 }
+/* 練習模式：對答案＝立刻記錄（中途結束也算數） */
+function reveal(){
+  const q=sess.list[sess.i]; const p=sess.picks[q.id]; if(p==null) return;
+  sess.rev=sess.rev||{}; sess.marked=sess.marked||{};
+  sess.rev[q.id]=true;
+  if(!sess.marked[q.id]){ markAns(q,p); sess.marked[q.id]=true; }
+  if(sess.daily){ S.daily[todayStr()]=true; save(); }
+  drawRun();
+  const fb=document.getElementById('instFb'); if(fb) try{fb.scrollIntoView({block:'center',behavior:'smooth'})}catch(_){}
+}
 function syncSel(){ const q=sess.list[sess.i]; sess.sel=(q.kind==='multi'&&sess.picks[q.id]!=null)?sess.picks[q.id].split(''):[]; }
-function nextQ(){ if(sess.i+1<sess.list.length){sess.i++;syncSel();drawRun();}else finish(); }
+function nextQ(){ const q=sess.list[sess.i]; if(sess.mode!=='exam'&&sess.picks[q.id]!=null&&!(sess.rev&&sess.rev[q.id])){ reveal(); return; }
+  if(sess.i+1<sess.list.length){sess.i++;syncSel();drawRun();window.scrollTo(0,0);}else finish(); }
 function prevQ(){ if(sess.i>0){sess.i--;syncSel();drawRun();} }
-function quitRun(){ if(Object.keys(sess.picks).length&&!confirm('離開會結束這次練習，作答不會計入，確定？'))return; stopTimer(); go('home'); }
+function confirmQuit(){
+  const n=Object.keys(sess.picks).length; if(!n) return true;
+  if(sess.mode==='exam') return confirm('離開會結束這次整卷模擬，這份卷的作答不會計入（想算分請按到最後「交卷」），確定離開？');
+  const m=Object.keys(sess.marked||{}).length;
+  return confirm(`結束這次練習？\n已對過答案的 ${m} 題都已記錄（答錯的已收進錯題本）。`);
+}
+function quitRun(){ if(!confirmQuit())return; quitting=true; stopTimer(); history.back(); }
 
 function finish(){
   stopTimer();
-  sess.list.forEach(q=>{ if(sess.picks[q.id]!=null) markAns(q,sess.picks[q.id]); });
+  sess.list.forEach(q=>{ if(sess.picks[q.id]!=null&&!(sess.marked&&sess.marked[q.id])) markAns(q,sess.picks[q.id]); });
   if(sess.daily && Object.keys(sess.picks).length){ S.daily[todayStr()]=true; save(); }
   const list=sess.list, picks=sess.picks;
   const done=list.filter(q=>picks[q.id]!=null);
@@ -430,8 +473,9 @@ function finish(){
     <div class="result">
      <div class="big card">
        <div style="font-size:.85rem;color:var(--sub);font-weight:700">${esc(sess.title)}</div>
-       <div class="score">${pct(corr.length,done.length)}<span style="font-size:1.2rem">分</span></div>
+       <div class="score">${pct(corr.length,list.length)}<span style="font-size:1.2rem">分</span></div>
        <div style="font-weight:700">答對 ${corr.length} / ${list.length} 題 ${timeStr}</div>
+       ${done.length<list.length?`<div style="font-size:.85rem;color:var(--sub);margin-top:4px">有作答 ${done.length} 題、未作答 ${list.length-done.length} 題（未作答以答錯計）</div>`:''}
      </div>
      <div class="card">
        <div class="sect" style="margin-top:0">各章節表現</div>
