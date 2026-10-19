@@ -1,7 +1,8 @@
 <html lang="zh-Hant">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#2E8C6A">
+<meta name="theme-color" content="#EEF7F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B1A1C" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="學測自然複習">
@@ -35,85 +36,145 @@
 <meta name="twitter:image:alt" content="學測自然複習 — 生物・地科・分科入口">
 
 <style>
-:root{
-  /* 稜線識別 theme-pine 對映（松綠，扁平無漸層無陰影） */
-  --accent:#1F7A5A; --accent2:#1F7A5A; --on-accent:#fff; --ink:#141E2B; --sub:#455F76;
-  --bg:#F7F3EC; --card:#fff; --line:#CFC6B2; --good:#16a34a; --gold:#f59e0b; --bad:#b91c1c;
-  --shadow:none; --wrap:1080px;
+/* ── 2026-10-19 版面美化「自然探險」（七系列勇者冒險家族語言：粉圓圓體＋Fluent 3D＋首屏主視覺＋金色立體主鈕＋狀態列）
+   主題色＝實驗室青綠；三張題庫卡同一套外觀，科目只用 3D 圖區分。字型 vendor/round-ui（OFL），3D 圖 vendor/fluent-3d（MIT）。 */
+@font-face{font-family:GsRound;src:url(vendor/round-ui/gs-round.woff2) format("woff2");font-display:swap}
+/* 同時寫在 .theme-pine：body 的 theme-pine（ridgeline-ui.css）會覆蓋 --accent／--tint */
+:root,.theme-pine{
+  --accent:#0F766E; --accent-2:#14B8A6; --on-accent:#fff; --ink:#10302B; --sub:#3F5F58;
+  --bg:#EEF7F3; --card:#fff; --line:#CFE3DB; --tint:#DDF1EA; --bad:#B42318;
+  --gold:#FFC83D; --gold-d:#C98A0B; --gold-ink:#3A2600;
+  --hero:linear-gradient(150deg,#0F7F76 0%,#0F6B64 45%,#0B3F3C 100%);
+  --shadow:0 1px 2px rgba(16,48,43,.06),0 10px 24px -14px rgba(15,118,110,.35);
+  --wrap:1180px; --round:GsRound,"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
 }
-@media (prefers-color-scheme:dark){:root{
-  --bg:#141E2B; --card:#1B2838; --ink:#EEF3F6; --sub:#B9C6D2; --line:#2A3A4E;
-  --accent:#5CCB9F; --accent2:#5CCB9F; --on-accent:#0B2A1E; --bad:#f87171;
-  --shadow:none;}}
-.theme-pine{--hdr:#1F6B52}
+@media (prefers-color-scheme:dark){:root,.theme-pine{
+  --accent:#5EEAD4; --accent-2:#2DD4BF; --on-accent:#05302C; --ink:#E7F6F2; --sub:#A9C7C0;
+  --bg:#0B1A1C; --card:#132A2C; --line:#244446; --tint:#173A3A; --bad:#F87171;
+  --hero:linear-gradient(150deg,#0F5F59 0%,#0B4643 50%,#082826 100%);
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 26px -16px rgba(0,0,0,.7);}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{overflow-x:hidden;max-width:100%}
 body{margin:0;font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;font-size:15px;
-  background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
-.wrap{max-width:var(--wrap);margin:0 auto;padding:16px 15px 24px}
-.rl-appbar{position:sticky;top:0;z-index:20}
-.rl-appbar .rl-glyph{width:30px;height:30px}
-.rl-appbar .rl-mark{background:rgba(238,243,246,.10)}
-.rl-appbar .rl-sub{color:#EEF3F6;font-size:14px;letter-spacing:.5px}
+  background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;padding-bottom:calc(68px + env(safe-area-inset-bottom,0px))}
+.f3{display:block;object-fit:contain}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:6px 16px 24px}
+/* 頁首：品牌小磚＋App 名照舊；拿掉整條深綠色塊，跟頁面同底 */
+.rl-appbar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);color:var(--ink);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);padding:10px 16px;border-bottom:1px solid transparent}
+.rl-appbar .rl-mark{background:var(--accent);width:40px;height:40px;border-radius:12px}
+@media (prefers-color-scheme:dark){.rl-appbar .rl-mark{background:#0F766E}}
+.rl-appbar .rl-glyph{width:28px;height:28px}
+.rl-appbar .rl-title{font-family:var(--round);font-weight:400;font-size:21px;letter-spacing:1px}
+.rl-appbar .rl-sub{color:var(--sub);font-size:13px;letter-spacing:.5px}
 .rl-appbar .lineShareFab,.rl-appbar .reportFab{width:40px;height:40px}
-/* 版面：手機單欄（日期→進度→題庫→說明）；桌機兩欄（左：日期/進度/說明，右：題庫） */
+/* 狀態列（HUD）：用既有的三個數字 */
+.hud{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:6px 0 12px}
+.hud .stat{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px 9px;min-width:0;box-shadow:var(--shadow)}
+.hud .stat img{width:28px;height:28px;flex:0 0 auto}
+.hud .stat b{font:400 1.25rem/1.1 var(--round);color:var(--accent);font-variant-numeric:tabular-nums}
+.hud .stat span{font:400 .8125rem/1.2 var(--round);color:var(--sub)}
+.hud .stat .tx{display:flex;flex-direction:column;min-width:0}
+/* 首屏主視覺 */
+.hero{position:relative;overflow:hidden;border-radius:26px;padding:20px 20px 22px;margin-bottom:18px;color:#fff;
+  background:radial-gradient(60% 50% at 88% 12%,rgba(94,234,212,.35),transparent 70%),
+    repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 1px,transparent 1px 22px),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 1px,transparent 1px 22px),var(--hero);
+  box-shadow:0 0 0 1px rgba(255,200,61,.35) inset,0 20px 36px -20px rgba(15,118,110,.9)}
+.hero .ht{display:grid;grid-template-columns:minmax(0,1fr) 96px;gap:8px;align-items:start}
+.hero .k{font:400 .8125rem/1.4 var(--round);color:var(--gold);letter-spacing:2px}
+.hero h2{margin:6px 0 6px;font:400 1.75rem/1.25 var(--round);letter-spacing:.5px}
+.hero p{margin:0;font-size:.9375rem;line-height:1.6;color:rgba(255,255,255,.92)}
+.hero .art{position:relative;width:96px;height:110px}
+.hero .art .a1{position:absolute;right:-4px;top:4px;width:92px;height:92px;filter:drop-shadow(0 10px 14px rgba(0,0,0,.35));transform:rotate(-8deg)}
+.hero .art .a2{position:absolute;left:-6px;bottom:0;width:36px;height:36px}
+.xp{height:12px;border-radius:99px;background:rgba(0,0,0,.3);overflow:hidden;margin:16px 0 6px}
+.xp i{display:block;height:100%;min-width:6px;border-radius:99px;background:linear-gradient(90deg,var(--gold),#FF9F43)}
+.xpl{font:400 .875rem/1.4 var(--round);color:rgba(255,255,255,.9);margin-bottom:14px}
+.go-main{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;text-decoration:none;border-radius:18px;
+  background:var(--gold);color:var(--gold-ink);font:400 1.1875rem/1.2 var(--round);padding:14px 18px;min-height:56px;
+  box-shadow:0 5px 0 var(--gold-d),0 12px 20px -10px rgba(0,0,0,.5);transition:transform .08s,box-shadow .08s}
+.go-main img{width:30px;height:30px}
+.go-main:active{transform:translateY(4px);box-shadow:0 1px 0 var(--gold-d)}
+.go-main:focus-visible{outline:3px solid #fff;outline-offset:3px}
+/* 版面：手機單欄（狀態列→主視覺→題庫→學測日期→說明）；桌機兩欄（左：主視覺/學測日期/說明，右：題庫） */
 .grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
-.grid>#exam,.grid>#stats,.grid>#qbank,.grid>#help{min-width:0}
-@media(min-width:900px){
-  .grid{grid-template-columns:minmax(0,5fr) minmax(0,7fr);grid-template-areas:"exam bank" "stats bank" "help bank";grid-template-rows:auto auto 1fr;column-gap:28px}
-  .grid>#exam{grid-area:exam}.grid>#stats{grid-area:stats}.grid>#qbank{grid-area:bank}.grid>#help{grid-area:help}
-  .wrap{padding-top:24px}
-}
-#exam,#qbank,#help,#stats{scroll-margin-top:84px}
-@media(max-width:899px){.grid>#qbank{order:1}.grid>#exam{order:2;margin-bottom:0}.grid>#stats{order:3}.grid>#help{order:4}}
-.exam{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:16px 18px;border:1px solid var(--line)}
-.exam .top{display:flex;align-items:center;gap:14px}
-.exam .d{font-size:2.4rem;font-weight:900;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums;flex:0 0 auto}
-.exam .l{flex:1;min-width:0}.exam .l b{font-size:1.0625rem}.exam .l small{display:block;color:var(--sub);font-size:.9375rem;margin-top:2px}
-.exam form{display:flex;gap:8px;margin-top:12px}
-.exam label{display:block;font-size:.9375rem;font-weight:700;margin-top:12px}
-.exam input{border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px;background:var(--bg);color:var(--ink);font:inherit;font-size:1rem;min-width:0;flex:1}
-.exam input:focus-visible,.exam button:focus-visible,.card:focus-visible,.tabs a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.exam button{border:1.5px solid var(--accent);background:transparent;color:var(--accent);border-radius:10px;padding:0 16px;min-height:44px;font-weight:800;cursor:pointer;font:inherit;font-size:1rem;font-weight:800;flex:0 0 auto}
-.exam .msg{display:block;min-height:1.4em;margin-top:6px;font-size:.9375rem;color:var(--bad);font-weight:700}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin:16px 0}
-.stat{background:var(--card);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--shadow);min-width:0;border:1px solid var(--line)}
-.stat b{display:block;font-size:1.6rem;font-weight:900;color:var(--accent);line-height:1.1}
-.stat span{font-size:.9375rem;color:var(--sub)}
-.sect{font-size:1rem;font-weight:800;color:var(--sub);margin:4px 4px 10px;letter-spacing:.5px}
-.card{display:block;text-decoration:none;color:inherit;background:var(--card);border-radius:20px;
-  box-shadow:var(--shadow);padding:16px 17px;margin-bottom:14px;border:1px solid var(--line);
-  position:relative;overflow:hidden;transition:transform .12s}
+.grid>*{min-width:0}
+@media(max-width:999px){.grid>#hud{order:0}.grid>.hero{order:1}.grid>#qbank{order:2}.grid>#exam{order:3}.grid>#help{order:4}
+  .grid{max-width:720px;margin:0 auto}}
+#exam,#qbank,#help{scroll-margin-top:80px}
+.sect{display:flex;align-items:center;gap:8px;font:400 1.1875rem/1.3 var(--round);color:var(--ink);margin:2px 2px 12px}
+.sect img{width:30px;height:30px}
+.sect small{font:400 .875rem var(--round);color:var(--sub);margin-left:auto}
+/* 題庫卡：三張同一套，科目只用 3D 圖區分 */
+.card{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:22px;
+  box-shadow:var(--shadow);padding:16px;margin-bottom:14px;position:relative;transition:transform .12s}
 .card:active{transform:scale(.985)}
-.card .bar-top{position:absolute;left:0;top:0;height:5px;width:100%}
-.card .hd{display:flex;align-items:center;gap:13px;margin-bottom:12px}
-.card .emoji{flex:0 0 auto;font-size:32px;width:52px;height:52px;border-radius:15px;display:grid;place-items:center;color:#fff}
+.card.main{box-shadow:0 0 0 3px var(--gold),var(--shadow)}
+.card .hd{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.card .pic{flex:0 0 auto;width:68px;height:68px;border-radius:20px;background:var(--tint);display:grid;place-items:center}
+.card .pic img{width:52px;height:52px}
 .card .nm{flex:1;min-width:0}
-.card .nm b{font-size:1.2rem;font-weight:900}
-.card .nm small{display:block;color:var(--sub);font-size:.9375rem;margin-top:1px;line-height:1.45}
-.card .go{flex:0 0 auto;font-size:.9375rem;font-weight:800;padding:9px 14px;border-radius:22px;color:#fff;border:2px solid transparent}
-.card.alt .go{background:transparent!important}
-.card.main{color:#fff;border-color:transparent}
-.card.main .nm small,.card.main .row,.card.main .row .hi{color:#fff}
-.card.main .rec{display:inline-block;font-size:.875rem;font-weight:800;background:rgba(0,0,0,.28);border-radius:20px;padding:1px 10px;margin-bottom:3px}
-.card.main .go{background:#fff!important;font-size:1.0625rem;padding:12px 20px}
-.card.main .prog{background:rgba(255,255,255,.3)}
-.card.main .bar-top{display:none}
-.prog{height:9px;border-radius:99px;background:var(--line);overflow:hidden;margin:4px 0 8px}
-.prog i{display:block;height:100%;border-radius:99px;transition:width .5s}
+.card .nm b{display:block;font:400 1.3125rem/1.25 var(--round)}
+.card .nm small{display:block;color:var(--sub);font-size:.9375rem;margin-top:2px;line-height:1.45}
+.card .rec{display:inline-block;font:400 .8125rem/1.5 var(--round);background:var(--gold);color:var(--gold-ink);border-radius:20px;padding:1px 10px;margin-bottom:4px}
+.card .go{display:block;text-align:center;font:400 1.0625rem/1.2 var(--round);padding:11px 14px;border-radius:14px;
+  color:var(--accent);border:2px solid var(--accent);background:transparent;margin-bottom:12px}
+.prog{height:10px;border-radius:99px;background:var(--tint);overflow:hidden;margin:2px 0 8px}
+.prog i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent-2),var(--accent));transition:width .5s}
 .row{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:.9375rem;color:var(--sub);font-weight:600}
 .row .hi{color:var(--ink);font-weight:800}
+.row .bad{color:var(--bad)}
 .badge{display:inline-block;font-size:.875rem;font-weight:800;padding:2px 8px;border-radius:20px;margin-left:6px}
-.foot{text-align:center;color:var(--sub);font-size:.9375rem;margin-top:22px;line-height:1.7}
-.tip{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:12px 15px;font-size:.9375rem;color:var(--sub);line-height:1.7;margin-top:4px;border:1px solid var(--line)}
+/* 學測日期 */
+.exam{background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:16px 18px;border:1px solid var(--line);margin-bottom:14px}
+.exam .top{display:flex;align-items:center;gap:14px}
+.exam .top img{width:56px;height:56px;flex:0 0 auto}
+.exam .d{font:400 2.6rem/1 var(--round);color:var(--accent);font-variant-numeric:tabular-nums;flex:0 0 auto}
+.exam .l{flex:1;min-width:0}.exam .l b{font:400 1.125rem/1.35 var(--round)}.exam .l small{display:block;color:var(--sub);font-size:.9375rem;margin-top:2px}
+.exam form{display:flex;gap:8px;margin-top:8px}
+.exam label{display:block;font-size:.9375rem;font-weight:700;margin-top:12px}
+.exam input{border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;min-height:46px;background:var(--bg);color:var(--ink);font:inherit;font-size:1rem;min-width:0;flex:1}
+.exam button{border:2px solid var(--accent);background:transparent;color:var(--accent);border-radius:12px;padding:0 18px;min-height:46px;cursor:pointer;font:400 1rem var(--round);flex:0 0 auto}
+.exam input:focus-visible,.exam button:focus-visible,.card:focus-visible,.tabs a:focus-visible,.help-sum:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.exam .msg{display:block;min-height:1.4em;margin-top:6px;font-size:.9375rem;color:var(--bad);font-weight:700}
+/* 說明：收起成一行 */
+#help details{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.help-sum{display:flex;align-items:center;gap:10px;list-style:none;cursor:pointer;padding:12px 16px;min-height:52px;font:400 1.0625rem var(--round)}
+.help-sum::-webkit-details-marker{display:none}
+.help-sum img{width:30px;height:30px}
+.help-sum::after{content:"展開";margin-left:auto;font-size:.875rem;color:var(--accent)}
+#help details[open] .help-sum::after{content:"收起"}
+.tip{padding:0 16px 14px;font-size:.9375rem;color:var(--sub);line-height:1.75}
 .tip b{color:var(--ink)}
+.foot{text-align:center;color:var(--sub);font-size:.9375rem;margin-top:22px;line-height:1.7}
 .disc{font-size:.9375rem;line-height:1.7;color:var(--sub);max-width:640px;margin:14px auto 0}
-.tabs{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
-.tabs a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:56px;gap:1px;text-decoration:none;color:var(--sub);font-size:.9375rem;font-weight:700}
-.tabs a span{font-size:1.25rem;line-height:1}
+/* 底部分頁（手機）：3D 圖示 */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;background:color-mix(in srgb,var(--card) 94%,transparent);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60px;gap:2px;text-decoration:none;color:var(--sub);font:400 .875rem var(--round)}
+.tabs a img{width:26px;height:26px;opacity:.75}
 .tabs a[aria-current="true"]{color:var(--accent)}
-@media(min-width:900px){.tabs{left:50%;right:auto;transform:translateX(-50%);width:480px;border:1px solid var(--line);border-bottom:0;border-radius:16px 16px 0 0}}
-
+.tabs a[aria-current="true"] img{opacity:1;transform:scale(1.08)}
+@media(min-width:600px){.hero h2{font-size:2rem}.hero .ht{grid-template-columns:minmax(0,1fr) 140px}.hero .art{width:140px;height:140px}.hero .art .a1{width:128px;height:128px}.hero .art .a2{width:44px;height:44px}}
+@media(min-width:1000px){
+  body{padding-bottom:0}
+  .tabs{display:none}
+  .wrap{padding:14px 28px 24px}
+  .grid{grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);grid-template-areas:"hud hud" "hero bank" "exam bank" "help bank";grid-template-rows:auto auto auto 1fr;column-gap:28px}
+  .grid>#hud{grid-area:hud}.grid>.hero{grid-area:hero}.grid>#qbank{grid-area:bank}.grid>#exam{grid-area:exam}.grid>#help{grid-area:help}
+  .hud{margin:0 0 18px}.hud .stat{padding:10px 14px}.hud .stat img{width:34px;height:34px}.hud .stat b{font-size:1.5rem}.hud .stat span{font-size:.9375rem}
+  .hud .stat .tx{flex-direction:row;align-items:baseline;gap:8px}
+  .hero{padding:28px 30px 28px}.hero h2{font-size:2.5rem}.hero p{font-size:1rem}
+  .hero .ht{grid-template-columns:minmax(0,1fr) 170px}.hero .art{width:170px;height:160px}.hero .art .a1{width:150px;height:150px}.hero .art .a2{width:52px;height:52px}
+  .go-main{display:inline-flex;width:auto;padding:14px 30px}
+  .card{padding:18px 20px}
+  .card .hd{margin-bottom:12px}
+  .card{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:16px;align-items:center}
+  .card .hd{margin-bottom:12px}
+  .card .go{margin:0 0 12px;padding:10px 18px}
+  .card .prog,.card .row{grid-column:1/-1}
+}
 </style>
 <body class="theme-pine">
 
@@ -128,21 +189,25 @@ body{margin:0;font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",syst
 
 <div class="wrap">
   <div class="grid">
-  <div class="exam" id="exam"></div>
+  <div class="hud" id="hud"><div id="stats" style="display:contents" aria-label="練習進度總覽"></div></div>
 
-  <div class="stats" id="stats" aria-label="練習進度總覽"></div>
+  <section class="hero" id="hero" aria-labelledby="heroTitle"></section>
 
   <section id="qbank">
-    <h2 class="sect">📚 選一個題庫開始練習</h2>
+    <h2 class="sect"><img class="f3" src="vendor/fluent-3d/books.png" alt="" width="30" height="30">選一個題庫開始練習</h2>
     <div id="cards"></div>
   </section>
 
+  <div class="exam" id="exam"></div>
+
   <section id="help">
-    <h2 class="sect">💡 使用說明</h2>
-    <div class="tip">
-      <b>三支 App 各自獨立</b>，進度分開記錄、離線可用、可各自「加到主畫面」。<br>
-      在此設定<b>學測日期</b>會同步到三支 App 的倒數。學測考生物與地科（學測自然）；<b>分科生物</b>範圍更廣（選修生物Ⅰ–Ⅳ），作為進階加深練習。
-    </div>
+    <details id="helpBox">
+      <summary class="help-sum"><img class="f3" src="vendor/fluent-3d/bulb.png" alt="" width="30" height="30">怎麼用：三支 App 的關係</summary>
+      <div class="tip">
+        <b>三支 App 各自獨立</b>，進度分開記錄、離線可用、可各自「加到主畫面」。<br>
+        在此設定<b>學測日期</b>會同步到三支 App 的倒數。學測考生物與地科（學測自然）；<b>分科生物</b>範圍更廣（選修生物Ⅰ–Ⅳ），作為進階加深練習。
+      </div>
+    </details>
   </section>
   </div>
 
@@ -160,17 +225,18 @@ body{margin:0;font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",syst
 </div>
 
 <nav class="tabs" id="tabs" aria-label="主要功能區">
-  <a href="#qbank" aria-current="true"><span aria-hidden="true">📚</span>題庫</a>
-  <a href="#exam"><span aria-hidden="true">📅</span>倒數與進度</a>
-  <a href="#help"><span aria-hidden="true">💡</span>說明</a>
+  <a href="#qbank" aria-current="true"><img class="f3" src="vendor/fluent-3d/books.png" alt="" width="26" height="26">題庫</a>
+  <a href="#exam"><img class="f3" src="vendor/fluent-3d/calendar.png" alt="" width="26" height="26">倒數與進度</a>
+  <a href="#help"><img class="f3" src="vendor/fluent-3d/bulb.png" alt="" width="26" height="26">說明</a>
 </nav>
 
 <script>
 const HUBKEY='natsci_hub_v1';
+const F3='vendor/fluent-3d/';
 const APPS=[
- {key:'biogsat_qb_v1',name:'學測生物',sub:'細胞・遺傳・演化（學測自然）',emoji:'🧬',c:'#047857',c2:'#10b981',path:'biology/index.html',tot:69,all:78},
- {key:'escgsat_qb_v1',name:'學測地科',sub:'天文・大氣・海洋・地質・永續',emoji:'🌏',c:'#0369a1',c2:'#38bdf8',path:'earth/index.html',tot:62,all:70},
- {key:'fenke_qb_v1',name:'分科生物',sub:'選修生物Ⅰ–Ⅳ · 進階加深',emoji:'🧪',c:'#6d28d9',c2:'#a78bfa',path:'advanced-bio/index.html',tot:186,all:242},
+ {key:'biogsat_qb_v1',name:'學測生物',sub:'細胞・遺傳・演化（學測自然）',img:'dna',path:'biology/index.html',tot:69,all:78},
+ {key:'escgsat_qb_v1',name:'學測地科',sub:'天文・大氣・海洋・地質・永續',img:'globe',path:'earth/index.html',tot:62,all:70},
+ {key:'fenke_qb_v1',name:'分科生物',sub:'選修生物Ⅰ–Ⅳ · 進階加深',img:'microscope',path:'advanced-bio/index.html',tot:186,all:242},
 ];
 function readS(key){try{return JSON.parse(localStorage.getItem(key)||'{}')||{}}catch(e){return{}}}
 function stat(key){const S=readS(key);const rec=S.rec||{};const done=Object.keys(rec).length;
@@ -178,6 +244,7 @@ function stat(key){const S=readS(key);const rec=S.rec||{};const done=Object.keys
   return{done,corr,wrong:(S.wrong||[]).length,fav:(S.fav||[]).length,exam:((S.settings||{}).examDate)||''};}
 function pct(a,b){return b?Math.round(a/b*100):0}
 function esc(s){return(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function f3(k,w,cls){return `<img class="f3${cls?' '+cls:''}" src="${F3}${k}.png" alt="" width="${w}" height="${w}">`}
 
 function examDate(){
   // 優先 hub 自己的；否則抓任一 App 有設的
@@ -216,39 +283,52 @@ function render(){
         <button type="submit">${dt?'修改':'儲存'}</button></form>
       <span class="msg" id="examMsg" role="alert"></span>`;
   document.getElementById('exam').innerHTML = cd!=null
-   ? `<div class="top"><div class="d">${cd>0?cd:cd===0?'0':'✓'}</div>
+   ? `<div class="top">${f3('calendar',56)}<div class="d">${cd>0?cd:cd===0?'0':'✓'}</div>
       <div class="l"><b>${cd>0?`距離學測還有 ${cd} 天`:cd===0?'今天就是學測！加油':`學測已過 ${-cd} 天`}</b>
         <small>${esc(dt)}　（三支 App 同步）</small></div></div>${form}`
-   : `<div class="top"><div class="d" aria-hidden="true">📅</div><div class="l"><b>設定學測日期</b><small>設定後首頁顯示倒數，並同步到三支 App</small></div></div>${form}`;
+   : `<div class="top">${f3('calendar',56)}<div class="l"><b>設定學測日期</b><small>設定後首頁顯示倒數，並同步到三支 App</small></div></div>${form}`;
 
-  // 總覽
-  let done=0,corr=0,wrong=0;
-  APPS.forEach(a=>{const s=stat(a.key);done+=s.done;corr+=s.corr;wrong+=s.wrong;});
+  // 總覽（狀態列）
+  let done=0,corr=0,wrong=0,tot=0;
+  APPS.forEach(a=>{const s=stat(a.key);done+=s.done;corr+=s.corr;wrong+=s.wrong;tot+=a.tot;});
   document.getElementById('stats').innerHTML=`
-    <div class="stat"><b>${done}</b><span>累計已練</span></div>
-    <div class="stat"><b>${pct(corr,done)}%</b><span>總答對率</span></div>
-    <div class="stat"><b>${wrong}</b><span>待清錯題</span></div>`;
+    <div class="stat">${f3('check',28)}<div class="tx"><b>${done}</b><span>累計已練</span></div></div>
+    <div class="stat">${f3('target',28)}<div class="tx"><b>${pct(corr,done)}%</b><span>總答對率</span></div></div>
+    <div class="stat">${f3('memo',28)}<div class="tx"><b>${wrong}</b><span>待清錯題</span></div></div>`;
 
-  // 卡片
   // 主推哪一個：有進度但還沒練完的（已練最多者）；都沒有就是第一個（學測生物）
   let mainIdx=0,best=-1;
   APPS.forEach((a,i)=>{const s=stat(a.key);if(s.done>0&&s.done<a.tot&&s.done>best){best=s.done;mainIdx=i;}});
+  const M=APPS[mainIdx], Ms=stat(M.key), mainLabel=Ms.done>0?'繼續練習':'開始練習';
+
+  // 首屏主視覺：一句大標＋總進度＋唯一主行動（主推題庫）
+  const tp=pct(done,tot);
+  document.getElementById('hero').innerHTML=`
+    <div class="ht"><div>
+      <div class="k">${cd!=null&&cd>0?`距離學測 ${cd} 天 · `:''}大考中心歷屆試題</div>
+      <h2 id="heroTitle">今天的自然探險<br>從這裡出發</h2>
+      <p>學測生物・學測地科・分科生物三個題庫，練習時每題作答後立即對答案。</p>
+    </div><div class="art" aria-hidden="true">${f3('test_tube',92,'a1')}${f3('sparkles',36,'a2')}</div></div>
+    <div class="xp" role="progressbar" aria-label="三個題庫選擇題已練進度" aria-valuemin="0" aria-valuemax="${tot}" aria-valuenow="${done}"><i style="width:${tp}%"></i></div>
+    <div class="xpl">選擇題已練 ${done} / ${tot}（${tp}%）</div>
+    <a class="go-main" href="${M.path}">${f3('rocket',30)}<span class="lbl">${mainLabel}：${M.name}</span></a>`;
+
+  // 題庫卡：三張同一套外觀，主推只加金色光圈與標籤
   document.getElementById('cards').innerHTML=APPS.map((a,i)=>{
     const s=stat(a.key);const p=pct(s.done,a.tot);
     const acc=s.done?pct(s.corr,s.done):0;
     const isMain=i===mainIdx;
     const accBadge=s.done?`<span class="badge" style="background:${acc>=80?'#dcfce7':acc>=60?'#fef3c7':'#fee2e2'};color:${acc>=80?'#166534':acc>=60?'#92400e':'#991b1b'}">答對率 ${acc}%</span>`:'';
     const label=s.done>0?'繼續練習':'開始練習';
-    return `<a class="card ${isMain?'main':'alt'}" href="${a.path}"${isMain?` style="background:${a.c}"`:''}>
-      <div class="bar-top" style="background:${a.c}"></div>
+    return `<a class="card ${isMain?'main':'alt'}" href="${a.path}">
       <div class="hd">
-        <div class="emoji" style="background:${isMain?'rgba(255,255,255,.22)':a.c}" aria-hidden="true">${a.emoji}</div>
-        <div class="nm">${isMain?'<span class="rec">建議從這裡開始</span><br>':''}<b>${a.name}</b><small>${esc(a.sub)}<br>${a.all} 題（選擇 ${a.tot}＋非選 ${a.all-a.tot}）</small></div>
+        <div class="pic" aria-hidden="true">${f3(a.img,52)}</div>
+        <div class="nm">${isMain?'<span class="rec">建議從這裡開始</span>':''}<b>${a.name}</b><small>${esc(a.sub)}<br>${a.all} 題（選擇 ${a.tot}＋非選 ${a.all-a.tot}）</small></div>
       </div>
-      <div class="hd" style="margin-bottom:10px"><div class="go" style="${isMain?`color:${a.c}`:`color:var(--ink);border-color:${a.c}`};width:100%;text-align:center;background:${a.c}">${label} ›</div></div>
-      <div class="prog"><i style="width:${p}%;background:${isMain?'#fff':a.c}"></i></div>
+      <div class="go">${label} ›</div>
+      <div class="prog"><i style="width:${p}%"></i></div>
       <div class="row"><span>選擇題已練 <span class="hi">${s.done}</span> / ${a.tot}（${p}%）${accBadge}</span>
-        <span>${s.wrong?`錯題 <span class="hi" ${isMain?'':'style="color:var(--bad)"'}>${s.wrong}</span>`:'錯題 0'}</span></div>
+        <span>${s.wrong?`錯題 <span class="hi bad">${s.wrong}</span>`:'錯題 0'}</span></div>
     </a>`;
   }).join('');
 
@@ -258,7 +338,9 @@ render();
 (function(){
   var links=[].slice.call(document.querySelectorAll('#tabs a'));
   function mark(id){links.forEach(function(a){a.setAttribute('aria-current',a.getAttribute('href')==='#'+id?'true':'false')});}
-  links.forEach(function(a){a.addEventListener('click',function(){mark(a.getAttribute('href').slice(1))})});
+  links.forEach(function(a){a.addEventListener('click',function(){var id=a.getAttribute('href').slice(1);
+    if(id==='help'){var d=document.getElementById('helpBox');if(d)d.open=true;}
+    mark(id)})});
   if(!('IntersectionObserver' in window))return;
   var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)mark(e.target.id)})},{rootMargin:'-30% 0px -60% 0px'});
   ['qbank','exam','help'].forEach(function(id){var el=document.getElementById(id);if(el)io.observe(el)});
