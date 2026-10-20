@@ -251,6 +251,47 @@ try {
   ok('7.12 深色模式：頁面與題庫卡是深底、題庫名是淺字', dk.lb < 0.2 && dk.lc < 0.25 && dk.li > 0.7, dk);
   await c.scheme('light');
 
+  console.log('\n[8 手機返回鍵（2026-10-20）]');
+  {
+    // 用不同網址開（?bk=1）＝真的跨文件導覽，第一筆紀錄才是這一頁的首頁
+    await c.width(390);
+    await c.open(BASE + '?bk=1');
+    await sleep(300);
+    const view = () => c.eval(`({y:Math.round(scrollY), hash:location.hash, cur:[...document.querySelectorAll('#tabs a')].filter(a=>a.getAttribute('aria-current')==='true').map(a=>a.getAttribute('href')),
+      help:document.getElementById('helpBox').open})`);
+    const nav = async (expr) => { await c.eval(expr); await sleep(700); };
+    const v0 = await view();
+    await nav(`document.querySelector('#tabs a[href="#exam"]').click()`);
+    const v1 = await view();
+    await nav(`history.back()`);
+    const v2 = await view();
+    ok('8.1 首頁 → 點「倒數與進度」→ 上一頁：捲回原位（y ' + v1.y + '→' + v2.y + '）、網址沒有錨點、分頁亮燈回到「題庫」',
+      v0.y < 50 && v1.y > 300 && v1.hash === '#exam' && v2.y < 50 && v2.hash === '' && JSON.stringify(v2.cur) === '["#qbank"]', { v0, v1, v2 });
+    await nav(`document.querySelector('#tabs a[href="#exam"]').click()`);
+    await nav(`document.querySelector('#tabs a[href="#help"]').click()`);
+    const v3 = await view();
+    await nav(`history.back()`);
+    const v4 = await view();
+    await nav(`history.forward()`);
+    const v5 = await view();
+    ok('8.2 倒數 → 點「說明」（展開）→ 上一頁：說明收回、回到倒數、亮燈「倒數與進度」；再前進：說明又展開',
+      v3.help && v3.hash === '#help' && !v4.help && v4.hash === '#exam' && JSON.stringify(v4.cur) === '["#exam"]' && v5.help && v5.hash === '#help', { v3, v4, v5 });
+    await nav(`history.back()`); await nav(`history.back()`);
+    const v6 = await view();
+    await c.eval(`window.__bk=1`);
+    await nav(`history.back()`);
+    const left = await c.eval(`typeof window.__bk === 'undefined'`).catch(() => true);
+    ok('8.3 回到首頁（無錨點）後再按上一頁 → 離開這一頁', v6.hash === '' && left === true, { v6, left });
+    // 使用者自己打開的說明（不是從分頁打開）不會被上一頁收掉
+    await c.open(BASE + '?bk=2');
+    await sleep(300);
+    await c.eval(`document.getElementById('helpBox').open=true`);
+    await nav(`document.querySelector('#tabs a[href="#exam"]').click()`);
+    await nav(`history.back()`);
+    const v7 = await view();
+    ok('8.4 自己點開的說明，按分頁再上一頁後仍保持展開（只收回由分頁打開的）', v7.help === true && v7.hash === '', v7);
+  }
+
   console.log('\n[6 沒有錯誤、只連本機]');
   ok('6.1 沒有未捕捉的 JS 例外', c.errors.length === 0, c.errors.slice(0, 3));
   const hosts = [...new Set(c.requests.filter((u) => /^https?:/i.test(u)).map((u) => new URL(u).hostname))];
