@@ -183,6 +183,11 @@ details.sig-disc{margin-top:8px;text-align:center}
   .card .go{margin:0 0 12px;padding:10px 18px}
   .card .prog,.card .row{grid-column:1/-1}
 }
+/* 2026-10-20 頁尾山形深淺版：淺色 navy、深色 white（跟隨系統＋App 自己的 data-theme 切換） */
+.rl-signature .rl-sig-dk{display:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .rl-signature .rl-sig-lt{display:none}:root:not([data-theme="light"]) .rl-signature .rl-sig-dk{display:block}}
+:root[data-theme="dark"] .rl-signature .rl-sig-lt{display:none}
+:root[data-theme="dark"] .rl-signature .rl-sig-dk{display:block}
 </style>
 <body class="theme-pine">
 
@@ -223,7 +228,7 @@ details.sig-disc{margin-top:8px;text-align:center}
 
   <footer class="rl-signature">
     <div class="rl-sig-row">
-      <span class="rl-mkcol" style="display:inline-flex;flex-direction:column;align-items:center;gap:3px"><img class="rl-sig-glyph" src="rl-mark-denali-navy.png" width="66" height="34" alt="" style="object-fit:contain"><span style="font-family:'Noto Serif TC',serif;font-size:14px;font-weight:600;letter-spacing:.5px;color:currentColor">Denali</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:2px;color:#8794a3">6,190 M</span></span>
+      <span class="rl-mkcol" style="display:inline-flex;flex-direction:column;align-items:center;gap:3px"><img class="rl-sig-glyph rl-sig-lt" src="rl-mark-denali-navy.png" width="66" height="34" alt="" style="object-fit:contain"><img class="rl-sig-glyph rl-sig-dk" src="rl-mark-denali-white.png" width="66" height="34" alt="" style="object-fit:contain"><span style="font-family:'Noto Serif TC',serif;font-size:14px;font-weight:600;letter-spacing:.5px;color:currentColor">Denali</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:2px;color:#8794a3">6,190 M</span></span>
       <span class="rl-sig-rule" style="height:88px"></span>
       <p class="rl-sig-quote">今天的試煉，<br>是明天的高度。</p>
     </div>
