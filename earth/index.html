@@ -52,6 +52,16 @@ body{margin:0;font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",syst
 .wrap{max-width:var(--wrap);margin:0 auto;padding:14px 14px calc(var(--nav) + 20px)}
 .rl-appbar{position:sticky;top:0;z-index:30;padding-top:calc(env(safe-area-inset-top,0px) + 14px)}
 .rl-signature{padding-bottom:calc(32px + env(safe-area-inset-bottom,0px) + var(--nav) + 20px)}
+/* 2026-10-20 文字量調整 wave2：頁尾免責收成一行「⚠ 使用前須知」點開看全文（字級≥原本 13px、顏色沿用 --muted＝深淺色跟 App） */
+.rl-signature .sig-disc{max-width:640px;margin:8px auto 0;font-size:13px;line-height:1.7;color:var(--muted);text-align:center}
+.sig-disc>summary{display:flex;align-items:center;justify-content:center;gap:6px;width:fit-content;margin:0 auto;min-height:44px;padding:6px 16px;box-sizing:border-box;border:1px solid rgba(130,130,130,.35);border-radius:999px;font-size:14px;letter-spacing:1px;cursor:pointer;list-style:none;-webkit-tap-highlight-color:transparent}
+.sig-disc>summary::-webkit-details-marker{display:none}
+.sig-disc>summary::after{content:"\203A";display:inline-block;font-size:17px;line-height:1;transition:transform .2s}
+.sig-disc[open]>summary::after{transform:rotate(90deg)}
+.rl-signature .sig-disc>summary{color:inherit;font-weight:400}
+.rl-signature .sig-disc>summary::before,.rl-signature .sig-disc[open]>summary::before{content:none}
+.sig-disc>summary:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+.sig-disc-body{margin-top:8px}
 .iconbtn{width:36px;height:36px;border-radius:10px;background:color-mix(in srgb,var(--on) 16%,transparent);display:grid;place-items:center;font-size:17px;border:0;color:var(--on);cursor:pointer}
 #v-run .iconbtn{background:var(--soft);color:var(--sub)}
 #v-run .iconbtn.faved{background:var(--gold);color:#fff}
@@ -197,7 +207,8 @@ details summary::before{content:'▸ '}details[open] summary::before{content:'�
     <p class="rl-sig-quote">今天的試煉，<br>是明天的高度。</p>
   </div>
   <p class="rl-sig-by">Ridgeline · by Lucas</p>
-  <p style="font-size:13px;line-height:1.7;color:var(--muted);max-width:640px;margin:14px auto 0">© 2026 Lucas　程式著作權屬作者；試題著作權屬大學入學考試中心；本 App 免費供個人學習使用。<br>⚠️ 免責聲明：本 App 之題目、解析僅供學習參考，力求正確但仍可能有誤，且不代表任何官方立場；正式考試請以大學入學考試中心公告與教材為準。</p>
+  <p style="font-size:13px;line-height:1.7;color:var(--muted);max-width:640px;margin:14px auto 0">© 2026 Lucas　程式著作權屬作者；試題著作權屬大學入學考試中心；本 App 免費供個人學習使用。</p>
+  <details class="sig-disc"><summary>⚠ 使用前須知</summary><div class="sig-disc-body">⚠️ 免責聲明：本 App 之題目、解析僅供學習參考，力求正確但仍可能有誤，且不代表任何官方立場；正式考試請以大學入學考試中心公告與教材為準。</div></details>
 </footer>
 
 <script>
