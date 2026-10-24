@@ -288,7 +288,7 @@ try {
     hs = await homeStats(page);
     const th = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
     ok('3b.1 settings 缺 dark：能開、無例外、進度 1 題、倒數在', o.ready && o.newErrors.length === 0 && hs[0] === '1' && (await page.evaluate(() => !!document.querySelector('#v-home .cd'))), 1, { o, hs });
-    info(`3b settings 缺 dark 時 <html data-theme> = ${JSON.stringify(th)}（applyTheme 把 undefined 寫成字串；深淺色跟系統，非白畫面）`);
+    ok('3b.2 settings 缺 dark：<html data-theme> 不寫成字串 "undefined"（不設屬性＝跟系統）', th === null, 1, th);
 
     // 3c：題庫已刪掉的題號（錯題本與 rec 裡）
     await seed(page, { [app.wc]: '1', [app.key]: { rec: { [ids[0]]: { correct: false, n: 1 }, 'gone-1': { correct: false, n: 1 } }, wrong: [ids[0], 'gone-1'], fav: ['gone-2'], daily: {}, settings: { dark: 'auto', immediate: true, examDate: '' } } });
@@ -307,12 +307,49 @@ try {
     ok('3d.2 損壞的原始字串在作答前不被覆寫（還有機會救回）', raw3d === '{"rec":{"broken', 1, raw3d);
 
     // 3e／3f：欄位型別損壞（非歷史格式，手動改壞或其他程式寫壞）
-    for (const [tag, val, desc] of [['3e', { rec: { [ids[0]]: null, [ids[1]]: { correct: true, n: 1 } }, wrong: [], fav: [] }, 'rec 裡有一筆 null'],
-      ['3f', { rec: { [ids[0]]: { correct: true, n: 1 } }, wrong: {}, fav: [] }, 'wrong 不是陣列']]) {
-      await seed(page, { [app.wc]: '1', [app.key]: val });
+    // 2026-10-24 修正後補：清洗只丟壞掉的那筆，別科、收藏、經驗值、每日、設定都不少；載入時不寫回，下次正常存檔才寫回乾淨版
+    const OTHER = {
+      escgsat_qb_v1: JSON.stringify({ rec: { e1: { correct: true, n: 1 }, e2: { correct: false, n: 1 } }, wrong: ['e2'], fav: ['e1'], daily: { '2026-10-22': true }, settings: { dark: 'auto', immediate: true, examDate: '2027-01-16' } }),
+      fenke_qb_v1: JSON.stringify({ rec: { f1: { correct: true, n: 2 } }, wrong: [], fav: ['f1'], daily: {}, settings: { dark: 'light', immediate: true, examDate: '' } }),
+      ninja_xp_v1: JSON.stringify({ xp: 150, bySrc: { biology: 30, earth: 10, 'advanced-bio': 10, other: 100 }, correct: 15, units: 0, jutsu: [], seen: { biology: 1, earth: 1, 'advanced-bio': 1 }, ts: 1 }),
+      natsci_hub_v1: JSON.stringify({ examDate: '2027-01-16' }),
+    };
+    const KEEP = { daily: { '2026-10-23': true }, settings: { dark: 'dark', immediate: true, examDate: '2027-01-16' } };
+    for (const [tag, val, desc, expRec, expWrong] of [
+      ['3e', { rec: { [ids[0]]: null, [ids[1]]: { correct: true, n: 1 }, [ids[2]]: { correct: false, n: 2 } }, wrong: [ids[2]], fav: [ids[1], ids[3]], ...KEEP }, 'rec 裡有一筆 null', [ids[1], ids[2]], [ids[2]]],
+      ['3f', { rec: { [ids[0]]: { correct: true, n: 1 }, [ids[1]]: { correct: false, n: 1 } }, wrong: {}, fav: [ids[1], ids[3]], ...KEEP }, 'wrong 不是陣列', [ids[0], ids[1]], []]]) {
+      const rawSeed = JSON.stringify(val);
+      await seed(page, { [app.wc]: '1', [app.key]: rawSeed, ...OTHER });
       o = await openApp(page, app);
       const body = await page.evaluate(() => ({ home: (document.getElementById('v-home') || {}).innerHTML.length || 0, nav: document.querySelectorAll('#nav button').length }));
       ok(`${tag}.1 【損壞資料，非歷史格式；FAIL＝疑似 bug】${desc}：首頁仍畫得出來（不白畫面）`, o.ready && o.newErrors.length === 0, 1, { ready: o.ready, errors: o.newErrors.slice(0, 2), body });
+      const hsx = await homeStats(page);
+      const corrN = expRec.filter((id) => val.rec[id].correct).length;
+      ok(`${tag}.2 ${desc}：首頁只少壞掉那筆（已作答 ${expRec.length}、收藏 2）`, eq(hsx, [String(expRec.length), Math.round(corrN / expRec.length * 100) + '%', '2']), expRec.length, hsx);
+      const th2 = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
+      ok(`${tag}.3 ${desc}：深色設定保留（data-theme=dark）`, th2 === 'dark', 1, th2);
+      const d1 = await dump(page, [app.key, ...Object.keys(OTHER)]);
+      ok(`${tag}.4 ${desc}：載入時不覆寫本科存檔（原字串一字不差）`, d1[app.key] === rawSeed, 1, d1[app.key]);
+      const otherKeys = Object.keys(OTHER);
+      ok(`${tag}.5 ${desc}：別科 2 支、經驗值錢包、總入口共 ${otherKeys.length} 個 key 一字不差（經驗值沒少）`, otherKeys.every((k) => d1[k] === OTHER[k]), otherKeys.length, otherKeys.filter((k) => d1[k] !== OTHER[k]).map((k) => [k, d1[k]]));
+      await page.evaluate(() => save());   // 模擬下一次正常存檔
+      const S3 = JSON.parse(await page.evaluate((k) => localStorage.getItem(k), app.key));
+      const recKeys = Object.keys(S3.rec || {}).sort();
+      ok(`${tag}.6 ${desc}：下次存檔寫回乾淨版——rec 保留 ${expRec.length} 筆且內容不變、錯題＝${JSON.stringify(expWrong)}`, eq(recKeys, expRec.slice().sort()) && expRec.every((id) => eq(S3.rec[id], val.rec[id])) && eq(S3.wrong, expWrong), recKeys.length, S3);
+      ok(`${tag}.7 ${desc}：下次存檔後收藏 2 題、每日、設定都保留`, eq(S3.fav, val.fav) && eq(S3.daily, KEEP.daily) && eq(S3.settings, KEEP.settings), S3.fav.length, S3);
+      const d2 = await dump(page, otherKeys);
+      ok(`${tag}.8 ${desc}：存檔後別科、經驗值、總入口仍一字不差`, otherKeys.every((k) => d2[k] === OTHER[k]), otherKeys.length, otherKeys.filter((k) => d2[k] !== OTHER[k]));
+    }
+    // 3g：earth／advanced-bio 同一段程式，也各跑一次（rec 有 null＋wrong 不是陣列＋settings 缺 dark）
+    for (const a2 of APPS.slice(1)) {
+      await seed(page, { [a2.wc]: '1' });
+      await openApp(page, a2);
+      const id2 = await page.evaluate(() => R.slice(0, 2).map((q) => q.id));
+      await seed(page, { [a2.wc]: '1', [a2.key]: { rec: { [id2[0]]: null, [id2[1]]: { correct: true, n: 1 } }, wrong: {}, fav: [id2[1]], settings: { examDate: '2027-01-16' } } });
+      o = await openApp(page, a2);
+      const hs2 = await homeStats(page);
+      const th3 = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
+      ok(`3g.1 ${a2.dir} 壞資料：能開、無例外、首頁 1 題 100% 收藏 1、data-theme 不是 "undefined"`, o.ready && o.newErrors.length === 0 && eq(hs2, ['1', '100%', '1']) && th3 === null, 2, { o, hs2, th3 });
     }
     await closePage(page);
   }

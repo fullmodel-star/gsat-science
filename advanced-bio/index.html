@@ -228,12 +228,24 @@ const LS='fenke_qb_v1';
 let S = load();
 function load(){ try{return JSON.parse(localStorage.getItem(LS))||{}}catch(e){return{}} }
 function save(){ try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){} }
-S.rec = S.rec||{};
-S.wrong = S.wrong||[];
-S.fav = S.fav||[];
-S.daily = S.daily||{};
-S.settings = S.settings||{dark:'auto',immediate:true};
-if(S.settings.examDate===undefined)S.settings.examDate='';
+/* 2026-10-24 載入清洗：只丟掉壞掉的單筆（null、不是物件），欄位型別不對時換成預設值，其他進度原樣保留。
+   載入時不寫回；下次正常存檔（作答、收藏、改設定）才會寫回乾淨版本。 */
+function cleanS(s){
+  const isObj=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
+  const ids=a=>Array.isArray(a)?a.filter(x=>typeof x==='string'||typeof x==='number'):[];
+  if(!isObj(s))s={};
+  const rec={};
+  if(isObj(s.rec))Object.keys(s.rec).forEach(k=>{if(k!=='__proto__'&&isObj(s.rec[k]))rec[k]=s.rec[k];});
+  s.rec=rec;
+  s.wrong=ids(s.wrong);
+  s.fav=ids(s.fav);
+  if(!isObj(s.daily))s.daily={};
+  if(!isObj(s.settings))s.settings={dark:'auto',immediate:true};
+  if(s.settings.dark!=='light'&&s.settings.dark!=='dark')s.settings.dark='auto';
+  if(typeof s.settings.examDate!=='string')s.settings.examDate='';
+  return s;
+}
+S = cleanS(S);
 applyTheme();
 
 /* ---------- 忍者修行：跨App共用經驗值錢包(同網域，灌進火影修行計畫) ---------- */
@@ -612,7 +624,7 @@ function resetAll(){ if(confirm('確定清除所有作答與錯題紀錄？（�
 /* ---------- theme ---------- */
 function isDark(){ if(S.settings.dark==='dark')return true; if(S.settings.dark==='light')return false;
   return window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches; }
-function applyTheme(){ const d=S.settings.dark; if(d==='auto')document.documentElement.removeAttribute('data-theme');
+function applyTheme(){ const d=S.settings.dark; if(d!=='light'&&d!=='dark')document.documentElement.removeAttribute('data-theme');
   else document.documentElement.setAttribute('data-theme',d); }
 function toggleDark(){ S.settings.dark=isDark()?'light':'dark'; save(); applyTheme(); renderSettings(); }
 
