@@ -156,7 +156,7 @@ try {
     /學測生物/.test(cards[0].t) && /78 題（選擇 69＋非選 9）/.test(cards[0].t) &&
     /學測地科/.test(cards[1].t) && /70 題（選擇 62＋非選 8）/.test(cards[1].t) &&
     /分科生物/.test(cards[2].t) && /242 題（選擇 186＋非選 56）/.test(cards[2].t), cards.map((x) => x.t.slice(0, 80)));
-  ok('1.4 頁尾來源說明：大考中心官方公開試題、逐題解析整理中', await c.eval(`/大考中心官方公開試題/.test(document.getElementById('foot').textContent) && /逐題解析整理中/.test(document.getElementById('foot').textContent)`));
+  ok('1.4 頁尾來源說明：大考中心官方公開試題、分科生物自寫解析標明非官方（2026-11-13）', await c.eval(`/大考中心官方公開試題/.test(document.getElementById('foot').textContent) && /稜線編輯自寫解析（非官方）/.test(document.getElementById('foot').textContent)`));
   const fresh = await c.eval(`(()=>{const m=document.querySelectorAll('#cards .card.main'); return {n:m.length, href:m[0]&&m[0].getAttribute('href'), txt:m[0]&&m[0].textContent}})()`);
   ok('1.5 沒有進度時主推＝學測生物（唯一一張 .main，寫「建議從這裡開始」）', fresh.n === 1 && fresh.href === 'biology/index.html' && /建議從這裡開始/.test(fresh.txt), fresh);
   ok('1.6 頁首品牌：山形圖＋App 名「學測自然複習」', await c.eval(`!!document.querySelector('header.rl-appbar img.rl-glyph') && document.querySelector('.rl-title').textContent==='學測自然複習'`));

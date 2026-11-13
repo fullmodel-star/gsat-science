@@ -14,11 +14,17 @@ import json, os, re, sys, base64, io
 sys.stdout.reconfigure(encoding='utf-8')
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 APPS = ['biology', 'earth', 'advanced-bio']
-SELF_WRITTEN = {}   # {sub: {題目id, ...}}：確定為自寫的解析才保留
+# {sub: {題目id, ...}}：確定為自寫的解析才保留。
+# 2026-11-13 起分科生物自寫解析：題目 id 讀 _tools/fenke_expl 帳本（status=done），寫入由 apply_fenke_expl.py 負責。
+def _self_written():
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from apply_fenke_expl import done_ids
+    return {'advanced-bio': done_ids()}
+SELF_WRITTEN = _self_written()
 SOURCE = {
     'biology': '大學入學考試中心 學測自然考科 官方公開試題（111–115）',
     'earth': '大學入學考試中心 學測自然考科 官方公開試題（111–115）',
-    'advanced-bio': '大學入學考試中心 分科測驗生物 官方公開試題（112–114）',
+    'advanced-bio': '大學入學考試中心 分科測驗生物 官方公開試題（111–115）',
 }
 NOTE = '答案依大學入學考試中心公布。本題解析整理中。'
 NC_NOTE = '本題解析整理中。非選擇題的參考答案與評分原則，請見大學入學考試中心公布的資料。'
@@ -111,11 +117,13 @@ def main():
         for old, new in UI:
             if crlf: new = new.replace('\r\n', '\n').replace('\n', '\r\n'); old_c = old.replace('\r\n', '\n').replace('\n', '\r\n')
             else: old_c = old
+            if new.startswith(old_c) and 'function explHtml(' in new and 'function explHtml(' in out:
+                continue   # explHtml 已定義過（advanced-bio 2026-11-13 起是加了「稜線編輯撰寫」標示的版本），不要再插一次
             if old_c in out and old_c != new and not (new.startswith(old_c) and new in out):   # 插入型（new 以 old 開頭）已套用過就跳過
                 out = out.replace(old_c, new); n_ui += 1
         open(path, 'wb').write(out.encode('utf-8'))
         assert open(path, 'rb').read() == out.encode('utf-8')
-        print(f'[{sub}] 清空詳解 {n_expl} 題、topic {n_topic} 題、保留自寫 {kept}、裁圖 {n_img}、介面替換 {n_ui} 處')
+        print(f'[{sub}] 清空詳解 {n_expl} 題、topic {n_topic} 題、保留自寫 {len(kept)} 題、裁圖 {n_img}、介面替換 {n_ui} 處')
         total += n_expl
     print(f'合計清空詳解 {total} 題')
 
